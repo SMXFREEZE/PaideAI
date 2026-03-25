@@ -82,6 +82,17 @@ a{text-decoration:none;color:inherit}
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
 
+/* ── Responsive hook ─── */
+function useIsMobile(bp = 768) {
+  const [mob, setMob] = useState(window.innerWidth <= bp);
+  useEffect(() => {
+    const fn = () => setMob(window.innerWidth <= bp);
+    window.addEventListener('resize', fn, { passive: true });
+    return () => window.removeEventListener('resize', fn);
+  }, [bp]);
+  return mob;
+}
+
 /* ─────────── ZETA LOGO ─────────────────────────────────────────── */
 function ZetaLogo({ size = 34 }) {
   return (
@@ -270,15 +281,17 @@ function SpeechBubble({ dark = false }) {
 
 /* ─────────── APP MOCKUP ─────────────────────────────────────────── */
 function AppMockup() {
+  const isMobile = useIsMobile();
   return (
     <div style={{
-      width: 'clamp(300px,38vw,420px)',
+      width: isMobile ? '100%' : 'clamp(300px,38vw,420px)',
+      maxWidth: '100%',
       background: '#14110F',
       borderRadius: 18,
       border: '1px solid rgba(255,255,255,0.07)',
       boxShadow: '0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04)',
       overflow: 'hidden',
-      transform: 'rotate(1.5deg)',
+      transform: isMobile ? 'none' : 'rotate(1.5deg)',
       flexShrink: 0,
     }}>
       {/* Window bar */}
@@ -386,6 +399,7 @@ function Nav() {
 
 /* ─────────── HERO ───────────────────────────────────────────────── */
 function Hero() {
+  const isMobile = useIsMobile();
   return (
     <section className="grain" style={{
       position: 'relative', overflow: 'hidden',
@@ -453,7 +467,8 @@ function Hero() {
           </div>
         </div>
 
-        {/* RIGHT: Owl + mockup */}
+        {/* RIGHT: Owl + mockup — hidden on mobile to keep hero clean */}
+        {!isMobile && (
         <div style={{ flex:'1 1 320px', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:0 }}>
           {/* Owl with bubble */}
           <div style={{ display:'flex', alignItems:'flex-end', gap:14, marginBottom:20, paddingLeft:16 }}>
@@ -462,6 +477,7 @@ function Hero() {
           </div>
           <AppMockup/>
         </div>
+        )}
 
       </div>
     </section>
@@ -589,6 +605,7 @@ function SubjectCard({ name, tag, photo, gradient, accent, glyph }) {
 }
 
 function Subjects() {
+  const isMobile = useIsMobile();
   return (
     <section id="subjects" style={{ padding:'clamp(64px,8vw,100px) 24px', background:'var(--bg)' }}>
       <div style={{ maxWidth:1280, margin:'0 auto' }}>
@@ -608,7 +625,7 @@ function Subjects() {
             Explore all subjects →
           </a>
         </div>
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:16 }}>
+        <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(3,1fr)', gap: isMobile ? 10 : 16 }}>
           {SUBJECTS.map((s,i) => <SubjectCard key={i} {...s}/>)}
         </div>
       </div>
@@ -926,6 +943,7 @@ const MODES_DATA = [
 
 function ModesSection() {
   const [active, setActive] = React.useState(0);
+  const isMobile = useIsMobile();
   const m = MODES_DATA[active];
   const Mock = m.Mock;
 
@@ -951,15 +969,15 @@ function ModesSection() {
         </div>
 
         {/* Mode selector pills */}
-        <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginBottom:36 }}>
+        <div style={{ display:'flex', gap:10, flexWrap: isMobile ? 'nowrap' : 'wrap', marginBottom:36, overflowX: isMobile ? 'auto' : 'visible', paddingBottom: isMobile ? 4 : 0, scrollbarWidth:'none' }}>
           {MODES_DATA.map((mode, i) => {
             const on = active === i;
             return (
               <button key={i} onClick={()=>setActive(i)} style={{
-                padding:'11px 20px', cursor:'pointer',
-                fontFamily:'"Inter",sans-serif', fontSize:13, fontWeight:700,
+                padding: isMobile ? '9px 14px' : '11px 20px', cursor:'pointer',
+                fontFamily:'"Inter",sans-serif', fontSize: isMobile ? 12 : 13, fontWeight:700,
                 letterSpacing:'-0.01em', transition:'all .22s cubic-bezier(.34,1.4,.64,1)',
-                display:'flex', alignItems:'center', gap:9,
+                display:'flex', alignItems:'center', gap:9, flexShrink:0,
                 borderRadius:12,
                 background: on ? mode.color : 'var(--bg)',
                 color: on ? '#fff' : 'var(--ink-3)',
@@ -980,18 +998,22 @@ function ModesSection() {
 
         {/* Featured panel */}
         <div key={active} style={{
-          display:'grid', gridTemplateColumns:'1fr 1fr', gap:0,
+          display:'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap:0,
           border:'1px solid var(--border)', borderRadius:24, overflow:'hidden',
           background:'var(--bg)', animation:'fadeUp .28s ease-out both',
-          minHeight:400,
+          minHeight: isMobile ? 'auto' : 400,
         }}>
-          {/* Left: visual mock */}
+          {/* Left: visual mock — on mobile show after text so user reads description first */}
+          {!isMobile && (
           <div style={{ padding:'clamp(24px,4vw,36px)', background:'#0C0A08', display:'flex', alignItems:'stretch' }}>
             <Mock/>
           </div>
+          )}
 
           {/* Right: text */}
-          <div style={{ padding:'clamp(32px,5vw,52px)', display:'flex', flexDirection:'column', justifyContent:'space-between' }}>
+          <div style={{ padding: isMobile ? '28px 22px' : 'clamp(32px,5vw,52px)', display:'flex', flexDirection:'column', justifyContent:'space-between' }}>
             <div>
               <div style={{ display:'inline-flex', alignItems:'center', gap:6, marginBottom:18,
                 background:`${m.color}11`, border:`1px solid ${m.color}33`,
@@ -1048,6 +1070,13 @@ function ModesSection() {
               </svg>
             </a>
           </div>
+
+          {/* Mobile: show mock below text */}
+          {isMobile && (
+          <div style={{ padding:'20px', background:'#0C0A08', display:'flex', alignItems:'stretch' }}>
+            <Mock/>
+          </div>
+          )}
         </div>
 
       </div>

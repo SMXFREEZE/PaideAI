@@ -1138,11 +1138,13 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--sa
     position:fixed;bottom:0;left:0;right:0;
     width:100% !important;
     height:0;
-    transition:height .35s cubic-bezier(.4,0,.2,1);
+    /* Override desktop width-transition with height-transition */
+    transition:height .35s cubic-bezier(.4,0,.2,1) !important;
     border-left:none;border-top:1.5px solid #e5e0d4;
     z-index:200;
     border-radius:20px 20px 0 0;
     box-shadow:0 -8px 40px rgba(0,0,0,.12);
+    overflow:hidden;
   }
   .class-tool-col.open{
     width:100% !important;
