@@ -1,0 +1,38 @@
+# PaideIA — Adaptive AI Tutor
+# pip install -r requirements.txt
+
+# AI / LLM
+anthropic>=0.40.0           # Claude API (tutor brain + vision OCR)
+
+# Vector store (student notes RAG)
+chromadb>=0.5.0
+
+# Math verification
+sympy>=1.13.0               # Symbolic math — verify student answers
+
+# Retry logic
+tenacity>=8.2.3             # Retry on transient API errors
+
+# Rate limiting
+slowapi>=0.1.9              # Per-IP rate limiting for FastAPI
+
+# UI
+streamlit>=1.40.0
+streamlit-extras>=0.4.0
+
+# Document parsing
+pymupdf>=1.24.0             # PDF -> text/images (import as fitz)
+Pillow>=10.0.0              # Image handling
+
+# Data
+pyyaml>=6.0.1               # Curriculum YAML files
+python-dotenv>=1.0.0        # .env loading
+numpy>=1.26.0
+
+# Server
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9     # File upload support
+
+# Export
+reportlab>=4.0.0            # PDF quiz export

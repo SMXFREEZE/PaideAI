@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>PaideIA — Elite AI Tutoring</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+/* ── Reset ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',sans-serif;background:#FEFDF9;color:#100E0C;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+
+/* ── Design tokens ── */
+:root{
+  --bg:      #FEFDF9;
+  --bg-2:    #F5F0E8;
+  --border:  #E4DDD4;
+  --ink:     #100E0C;
+  --ink-2:   #65605A;
+  --ink-3:   #A8A099;
+  --accent:  #B5451B;
+  --gold:    #B07820;
+  --dark:    #0C0A08;
+  --dark-2:  #161210;
+}
+
+/* ── Keyframes ── */
+@keyframes owlFloat{0%,100%{transform:translateY(0) rotate(0)}40%{transform:translateY(-9px) rotate(-1.5deg)}70%{transform:translateY(-4px) rotate(1deg)}}
+@keyframes owlBlink{0%,88%,100%{transform:scaleY(0)}93%{transform:scaleY(1)}}
+@keyframes beakTalk{0%,100%{transform:scaleY(1)}50%{transform:scaleY(2.5)}}
+@keyframes bubbleIn{from{opacity:0;transform:scale(.88) translateY(10px)}to{opacity:1;transform:none}}
+@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes blob1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(30px,-20px) scale(1.08)}}
+@keyframes blob2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-20px,30px) scale(.92)}}
+@keyframes blob3{0%,100%{transform:translate(0,0) scale(1) rotate(0deg)}50%{transform:translate(10px,10px) scale(1.05) rotate(8deg)}}
+@keyframes shimmer{0%,100%{opacity:.03}50%{opacity:.055}}
+@keyframes dotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+/* ── Chameleon color shift ── */
+@keyframes chameleonShift{
+  0%,100%{filter:hue-rotate(0deg) saturate(1)}
+  20%{filter:hue-rotate(25deg) saturate(1.1)}
+  40%{filter:hue-rotate(-15deg) saturate(0.95)}
+  60%{filter:hue-rotate(40deg) saturate(1.15)}
+  80%{filter:hue-rotate(-10deg) saturate(1.05)}
+}
+
+/* ── Helpers ── */
+.serif{font-family:'DM Serif Display',serif}
+.serif-i{font-family:'DM Serif Display',serif;font-style:italic}
+.owl-wrap{animation:chameleonShift 12s ease-in-out infinite, owlFloat 5s ease-in-out infinite}
+.beak-talk{animation:beakTalk .28s ease-in-out infinite;transform-origin:center top;transform-box:fill-box}
+.bubble-wrap{animation:bubbleIn .35s cubic-bezier(.34,1.56,.64,1) both}
+.cursor{display:inline-block;width:1.5px;height:.9em;background:currentColor;animation:cursorBlink .8s step-end infinite;vertical-align:-1px;margin-left:1px}
+.fade-in{animation:fadeUp .6s ease-out both}
+
+/* ── Gold divider ── */
+.gold-rule{width:36px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+/* ── Grain overlay ── */
+.grain::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#ddd;border-radius:5px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ─────────── ZETA LOGO ─────────────────────────────────────────── */
+function ZetaLogo({ size = 34 }) {
+  return (
+    <div style={{
+      width: size, height: size,
+      background: 'var(--accent)',
+      borderRadius: Math.round(size * 0.28),
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      flexShrink: 0,
+      boxShadow: '0 2px 12px rgba(181,69,27,0.35)',
+    }}>
+      <span style={{
+        fontFamily: '"DM Serif Display",serif',
+        fontStyle: 'italic',
+        fontSize: Math.round(size * 0.65),
+        color: '#fff',
+        lineHeight: 1,
+        userSelect: 'none',
+        display: 'block',
+        marginTop: Math.round(size * 0.04),
+      }}>ζ</span>
+    </div>
+  );
+}
+
+/* ─────────── CHAMELEON MASCOT ────────────────────────────────────── */
+const OWL_MSGS = [
+  "Hello! Ready to master your course?",
+  "I adapt to you. Upload your notes.",
+  "I never give answers. Only better questions.",
+  "Let's learn something real today.",
+];
+
+function Chameleon({ width = 120, talking = false, light = false }) {
+  const id = useRef('cham_' + Math.random().toString(36).slice(2));
+  return (
+    <svg width={width} viewBox="0 0 240 240" className="owl-wrap" style={{overflow:'visible',filter:`drop-shadow(0 8px 24px rgba(${light?'254,253,249':'0,0,0'},0.18))`}} xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="120" cy="234" rx="58" ry="6" fill={light ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)'}/>
+      {/* Branch */}
+      <path d="M5,205 Q60,198 120,196 Q180,198 235,205" stroke="#3E2208" strokeWidth="10" fill="none" strokeLinecap="round"/>
+      <path d="M5,203 Q60,196 120,194 Q180,196 235,203" stroke="#5A3208" strokeWidth="7" fill="none" strokeLinecap="round"/>
+      <path d="M8,201 Q60,194 120,192 Q180,194 232,201" stroke="#7A4810" strokeWidth="3.5" fill="none" strokeLinecap="round"/>
+      <ellipse cx="50" cy="200" rx="3" ry="2" fill="#3E2208" opacity=".5"/>
+      <ellipse cx="155" cy="196" rx="3.5" ry="2" fill="#3E2208" opacity=".5"/>
+      <path d="M195,202 Q200,190 205,183" stroke="#5A3208" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <path d="M203,185 Q208,180 206,183" stroke="#5A3208" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+      {/* Tail spiral */}
+      <path d="M62,155 C30,158 8,185 22,210 C36,234 74,232 90,212 C106,192 88,168 68,170 C50,172 44,190 58,202 C70,210 80,200 76,190 C73,182 66,183 67,188" stroke="#7A4810" strokeWidth="14" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M62,155 C30,158 8,185 22,210 C36,234 74,232 90,212 C106,192 88,168 68,170 C50,172 44,190 58,202 C70,210 80,200 76,190 C73,182 66,183 67,188" stroke="#A06018" strokeWidth="9" fill="none" strokeLinecap="round"/>
+      <path d="M62,155 C30,158 8,185 22,210 C36,234 74,232 90,212 C106,192 88,168 68,170 C50,172 44,190 58,202 C70,210 80,200 76,190 C73,182 66,183 67,188" stroke="#C07830" strokeWidth="4" fill="none" strokeLinecap="round"/>
+      {/* Back leg */}
+      <path d="M92,175 Q89,185 86,200" stroke="#7A4810" strokeWidth="8" fill="none" strokeLinecap="round"/>
+      <path d="M92,175 Q89,185 86,200" stroke="#A06018" strokeWidth="5" fill="none" strokeLinecap="round"/>
+      <path d="M79,202 Q82,197 86,200" stroke="#6A3808" strokeWidth="3" fill="none" strokeLinecap="round"/>
+      <path d="M86,200 Q90,197 93,202" stroke="#6A3808" strokeWidth="3" fill="none" strokeLinecap="round"/>
+      <circle cx="79" cy="202" r="2" fill="#6A3808"/>
+      <circle cx="93" cy="202" r="2" fill="#6A3808"/>
+      {/* Body */}
+      <ellipse cx="118" cy="142" rx="56" ry="44" fill="#A06018"/>
+      <ellipse cx="118" cy="135" rx="48" ry="33" fill="#B07020" opacity=".45"/>
+      <path d="M70,158 Q118,182 166,158 Q158,174 118,178 Q78,174 70,158Z" fill="#EEC060"/>
+      <path d="M80,160 Q118,176 156,160 Q150,170 118,173 Q86,170 80,160Z" fill="#F0D070" opacity=".4"/>
+      <path d="M78,124 Q118,112 158,124" stroke="#C8983A" strokeWidth="1.6" fill="none" opacity=".45"/>
+      <path d="M74,138 Q118,126 162,138" stroke="#C8983A" strokeWidth="1.6" fill="none" opacity=".45"/>
+      <path d="M76,152 Q118,140 160,152" stroke="#C8983A" strokeWidth="1.6" fill="none" opacity=".45"/>
+      <circle cx="98" cy="130" r="3.5" fill="#C8983A" opacity=".18"/>
+      <circle cx="135" cy="126" r="4" fill="#C8983A" opacity=".15"/>
+      <circle cx="108" cy="148" r="2.5" fill="#C8983A" opacity=".15"/>
+      <circle cx="145" cy="142" r="3" fill="#C8983A" opacity=".12"/>
+      {/* Dorsal spines */}
+      <g fill="#7A4810" opacity=".7">
+        <polygon points="74,115 82,108 78,97"/>
+        <polygon points="82,108 90,104 86,92"/>
+        <polygon points="90,104 98,101 94,88"/>
+        <polygon points="98,101 106,99 102,85"/>
+        <polygon points="106,99 114,98 110,83"/>
+        <polygon points="114,98 122,98 118,82"/>
+        <polygon points="122,98 130,99 126,83"/>
+        <polygon points="130,99 138,101 134,85"/>
+        <polygon points="138,101 146,104 142,89"/>
+        <polygon points="146,104 154,108 150,93"/>
+      </g>
+      <g stroke="#C07830" strokeWidth="1" fill="none" opacity=".3">
+        <line x1="78" y1="97" x2="78" y2="111"/><line x1="86" y1="92" x2="86" y2="106"/>
+        <line x1="94" y1="88" x2="94" y2="102"/><line x1="102" y1="85" x2="102" y2="100"/>
+        <line x1="110" y1="83" x2="110" y2="98"/><line x1="118" y1="82" x2="118" y2="98"/>
+        <line x1="126" y1="83" x2="126" y2="98"/><line x1="134" y1="85" x2="134" y2="100"/>
+        <line x1="142" y1="89" x2="142" y2="102"/><line x1="150" y1="93" x2="150" y2="106"/>
+      </g>
+      {/* Front leg */}
+      <path d="M148,174 Q149,184 150,200" stroke="#7A4810" strokeWidth="8" fill="none" strokeLinecap="round"/>
+      <path d="M148,174 Q149,184 150,200" stroke="#A06018" strokeWidth="5" fill="none" strokeLinecap="round"/>
+      <path d="M143,202 Q146,197 150,200" stroke="#6A3808" strokeWidth="3" fill="none" strokeLinecap="round"/>
+      <path d="M150,200 Q154,197 157,202" stroke="#6A3808" strokeWidth="3" fill="none" strokeLinecap="round"/>
+      <circle cx="143" cy="202" r="2" fill="#6A3808"/>
+      <circle cx="157" cy="202" r="2" fill="#6A3808"/>
+      {/* Head */}
+      <circle cx="170" cy="118" r="34" fill="#A06018"/>
+      <circle cx="172" cy="116" r="28" fill="#B87028"/>
+      <path d="M175,140 Q192,142 198,132 Q200,128 196,124" fill="#A06018"/>
+      {/* Casque */}
+      <path d="M148,98 Q150,62 168,82 Q160,68 155,80Z" fill="#7A4810"/>
+      <path d="M150,94 Q152,66 164,80" stroke="#8A5015" strokeWidth="1.8" fill="none" opacity=".6"/>
+      <path d="M152,88 Q154,72 160,80" stroke="#5A3208" strokeWidth="1" fill="none" opacity=".3"/>
+      {/* Snout */}
+      <path d="M194,112 Q210,116 208,128 Q206,136 196,138" fill="#A06018"/>
+      <path d="M196,114 Q206,118 204,126 Q202,132 196,134" fill="#B87028"/>
+      <path d="M198,128 Q206,128 210,126" stroke="#5A3208" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+      <circle cx="202" cy="118" r="1.8" fill="#5A3208" opacity=".5"/>
+      {/* Tongue (when talking) */}
+      {talking && <path d="M210,126 Q222,120 230,126 Q234,132 228,136" stroke="#D05030" strokeWidth="2.5" fill="none" strokeLinecap="round" className="beak-talk"/>}
+      {/* Eye */}
+      <circle cx="176" cy="108" r="22" fill="#C07830" opacity=".4"/>
+      <circle cx="176" cy="108" r="18" fill="#FFFDF5"/>
+      <circle cx="176" cy="108" r="14" fill="#D09010"/>
+      <circle cx="176" cy="108" r="11" fill="#C08010" opacity=".6"/>
+      <ellipse cx="176" cy="108" rx="5" ry="7.5" fill="#1A1816"/>
+      <circle cx="180" cy="103" r="3.5" fill="white"/>
+      <circle cx="173" cy="113" r="1.8" fill="white" opacity=".45"/>
+      <circle cx="176" cy="108" r="20" fill="none" stroke="#5A3208" strokeWidth="2.8"/>
+      <clipPath id={`${id.current}-e`}><circle cx="176" cy="108" r="18"/></clipPath>
+      <rect x="157" y="90" width="38" height="18" fill="#B87028" clipPath={`url(#${id.current}-e)`} style={{animation:'owlBlink 5s ease-in-out infinite',transformOrigin:'center top',transformBox:'fill-box'}}/>
+      {/* Graduation cap */}
+      <path d="M150,82 Q152,74 172,72 Q192,74 194,82 Q192,86 172,88 Q152,86 150,82Z" fill="#222"/>
+      <path d="M151,82 Q153,76 172,74 Q191,76 193,82" fill="#2a2a2a"/>
+      <polygon points="172,56 204,72 172,82 140,72" fill="#1A1816"/>
+      <polygon points="172,58 200,72 172,80 144,72" fill="#252525"/>
+      <polygon points="140,72 172,82 172,84 140,74" fill="#111"/>
+      <polygon points="172,82 204,72 204,74 172,84" fill="#0a0a0a"/>
+      <circle cx="172" cy="72" r="3" fill="#333"/>
+      <circle cx="172" cy="72" r="1.8" fill="#444"/>
+      <path d="M172,72 Q178,74 192,66 Q200,60 202,52" stroke="#B5451B" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <g stroke="#B5451B" strokeWidth="1.6" strokeLinecap="round" fill="none">
+        <line x1="202" y1="52" x2="199" y2="42"/>
+        <line x1="202" y1="52" x2="201" y2="41"/>
+        <line x1="202" y1="52" x2="203" y2="41"/>
+        <line x1="202" y1="52" x2="205" y2="42"/>
+      </g>
+      <circle cx="202" cy="52" r="3" fill="#B5451B"/>
+      <circle cx="202" cy="52" r="1.5" fill="#D06030"/>
+    </svg>
+  );
+}
+
+/* ─────────── SPEECH BUBBLE ─────────────────────────────────────── */
+function SpeechBubble({ dark = false }) {
+  const [idx, setIdx]     = useState(0);
+  const [disp, setDisp]   = useState('');
+  const [char, setChar]   = useState(0);
+  const [phase, setPhase] = useState('typing');
+
+  useEffect(() => {
+    let t;
+    const msg = OWL_MSGS[idx];
+    if (phase === 'typing') {
+      if (char < msg.length) { t = setTimeout(() => { setDisp(msg.slice(0, char + 1)); setChar(c => c + 1); }, 38); }
+      else { t = setTimeout(() => setPhase('pause'), 2400); }
+    } else if (phase === 'pause') {
+      t = setTimeout(() => setPhase('clear'), 350);
+    } else {
+      if (disp.length > 0) { t = setTimeout(() => setDisp(d => d.slice(0, -2)), 11); }
+      else { setIdx(i => (i + 1) % OWL_MSGS.length); setChar(0); setPhase('typing'); }
+    }
+    return () => clearTimeout(t);
+  }, [phase, char, disp, idx]);
+
+  const bg = dark ? 'rgba(255,255,255,0.07)' : '#fff';
+  const border = dark ? 'rgba(255,255,255,0.1)' : '#E4DDD4';
+  const txtColor = dark ? 'rgba(255,255,255,0.88)' : '#2C2820';
+
+  return (
+    <div className="bubble-wrap" style={{
+      background: bg, border: `1.5px solid ${border}`,
+      borderRadius: '16px 16px 16px 4px',
+      padding: '13px 17px', maxWidth: 220, minHeight: 58,
+      backdropFilter: dark ? 'blur(12px)' : 'none',
+      boxShadow: dark ? '0 8px 32px rgba(0,0,0,0.3)' : '0 6px 24px rgba(176,120,32,0.12)',
+      display: 'flex', alignItems: 'center',
+    }}>
+      <p style={{ fontSize: 13, fontWeight: 500, color: txtColor, lineHeight: 1.5, fontFamily:'Inter,sans-serif' }}>
+        {disp}<span className="cursor" style={{ background: dark ? 'rgba(255,255,255,0.5)' : 'var(--ink-3)' }}/>
+      </p>
+    </div>
+  );
+}
+
+/* ─────────── APP MOCKUP ─────────────────────────────────────────── */
+function AppMockup() {
+  return (
+    <div style={{
+      width: 'clamp(300px,38vw,420px)',
+      background: '#14110F',
+      borderRadius: 18,
+      border: '1px solid rgba(255,255,255,0.07)',
+      boxShadow: '0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04)',
+      overflow: 'hidden',
+      transform: 'rotate(1.5deg)',
+      flexShrink: 0,
+    }}>
+      {/* Window bar */}
+      <div style={{ background:'#0D0B09', padding:'11px 16px', borderBottom:'1px solid rgba(255,255,255,0.05)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        <div style={{ display:'flex', gap:6 }}>
+          {['#B5451B','#C07820','#1A7048'].map((c,i) => <div key={i} style={{ width:9, height:9, borderRadius:'50%', background:c, opacity:.8 }}/>)}
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+          <div style={{ width:6, height:6, borderRadius:'50%', background:'#1A7048', animation:'dotPulse 2s ease-in-out infinite' }}/>
+          <span style={{ fontSize:10, fontWeight:600, color:'rgba(255,255,255,0.3)', letterSpacing:'.04em' }}>CALCULUS I</span>
+        </div>
+      </div>
+      {/* Chat area */}
+      <div style={{ padding:'16px 14px', display:'flex', flexDirection:'column', gap:12 }}>
+        {/* Tutor message */}
+        <div style={{ display:'flex', gap:9, alignItems:'flex-start' }}>
+          <div style={{ width:26, height:26, borderRadius:'50%', background:'rgba(181,69,27,0.2)', border:'1px solid rgba(181,69,27,0.3)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, marginTop:2 }}>
+            <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:13, color:'#D87040' }}>ζ</span>
+          </div>
+          <div style={{ background:'rgba(255,255,255,0.05)', borderRadius:'2px 12px 12px 12px', padding:'9px 12px', fontSize:12, color:'rgba(255,255,255,0.75)', lineHeight:1.55, flex:1 }}>
+            Before I explain, think about this: what does the slope of a curve <em style={{color:'rgba(200,160,80,0.9)'}}>at a single point</em> even mean?
+          </div>
+        </div>
+        {/* LaTeX block */}
+        <div style={{ background:'rgba(192,120,32,0.08)', border:'1px solid rgba(192,120,32,0.18)', borderLeft:'3px solid rgba(192,120,32,0.6)', borderRadius:'0 8px 8px 0', padding:'10px 14px', fontSize:12.5, color:'rgba(255,255,255,0.65)', fontFamily:"'SF Mono','Fira Code',monospace", letterSpacing:'.01em', lineHeight:1.6 }}>
+          f'(x) = lim<sub style={{fontSize:9}}>h→0</sub> <span style={{color:'rgba(200,160,80,.85)'}}>(f(x+h) - f(x)) / h</span>
+        </div>
+        {/* Student */}
+        <div style={{ background:'rgba(255,255,255,0.07)', borderRadius:'12px 2px 12px 12px', padding:'9px 12px', fontSize:12, color:'rgba(255,255,255,0.55)', maxWidth:'80%', marginLeft:'auto', lineHeight:1.45 }}>
+          Is it the slope of the tangent line?
+        </div>
+        {/* Tutor with quick check */}
+        <div style={{ display:'flex', gap:9, alignItems:'flex-start' }}>
+          <div style={{ width:26, height:26, borderRadius:'50%', background:'rgba(181,69,27,0.2)', border:'1px solid rgba(181,69,27,0.3)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, marginTop:2 }}>
+            <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:13, color:'#D87040' }}>ζ</span>
+          </div>
+          <div style={{ background:'rgba(255,255,255,0.05)', borderRadius:'2px 12px 12px 12px', padding:'9px 12px', fontSize:12, color:'rgba(255,255,255,0.75)', lineHeight:1.55 }}>
+            <span style={{ fontWeight:700, color:'rgba(200,160,80,.95)' }}>Quick check:</span> Exactly right. Now what happens when the function is perfectly flat?
+          </div>
+        </div>
+      </div>
+      {/* Input bar */}
+      <div style={{ borderTop:'1px solid rgba(255,255,255,0.05)', padding:'11px 14px', display:'flex', gap:8, alignItems:'center' }}>
+        <div style={{ flex:1, background:'rgba(255,255,255,0.05)', borderRadius:16, padding:'7px 13px', fontSize:11, color:'rgba(255,255,255,0.2)' }}>
+          Ask a question or highlight any text...
+        </div>
+        <div style={{ width:26, height:26, borderRadius:'50%', background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+          <span style={{ color:'#fff', fontSize:11 }}>→</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────── NAV ────────────────────────────────────────────────── */
+function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', fn, { passive: true });
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
+  const style = {
+    position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
+    background: scrolled ? 'rgba(12,10,8,0.92)' : 'transparent',
+    backdropFilter: scrolled ? 'blur(16px)' : 'none',
+    borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
+    transition: 'all 0.25s',
+  };
+
+  return (
+    <nav style={style}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', height: 62, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <a href="/" style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <ZetaLogo size={32}/>
+          <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:20, color:'#FEFDF9', letterSpacing:'-0.02em' }}>
+            Paide<span style={{ color:'var(--accent)' }}>IA</span>
+          </span>
+        </a>
+        <div className="hidden md:flex" style={{ gap:28 }}>
+          {[['#how','How it works'],['#modes','Modes'],['#subjects','Subjects'],['#faq','FAQ']].map(([h,l]) => (
+            <a key={h} href={h} style={{ fontSize:13, fontWeight:500, color:'rgba(255,255,255,0.45)', letterSpacing:'-0.01em', transition:'color .15s' }}
+               onMouseEnter={e=>e.target.style.color='rgba(255,255,255,.9)'}
+               onMouseLeave={e=>e.target.style.color='rgba(255,255,255,.45)'}>
+              {l}
+            </a>
+          ))}
+        </div>
+        <a href="/app" style={{
+          background: '#FEFDF9', color: '#100E0C',
+          fontSize: 13, fontWeight: 700, padding: '10px 22px',
+          borderRadius: 999, letterSpacing: '-0.01em',
+          transition: 'all .15s',
+          boxShadow: '0 2px 12px rgba(254,253,249,.15)',
+        }}
+        onMouseEnter={e=>{e.currentTarget.style.transform='scale(1.04)';e.currentTarget.style.boxShadow='0 4px 20px rgba(254,253,249,.22)';}}
+        onMouseLeave={e=>{e.currentTarget.style.transform='none';e.currentTarget.style.boxShadow='0 2px 12px rgba(254,253,249,.15)';}}>
+          Book a session
+        </a>
+      </div>
+    </nav>
+  );
+}
+
+/* ─────────── HERO ───────────────────────────────────────────────── */
+function Hero() {
+  return (
+    <section className="grain" style={{
+      position: 'relative', overflow: 'hidden',
+      background: 'linear-gradient(135deg, #0C0A08 0%, #1C1008 45%, #0E0C10 100%)',
+      paddingTop: 'clamp(110px,14vw,160px)',
+      paddingBottom: 'clamp(80px,10vw,120px)',
+    }}>
+      {/* Abstract warm glow blobs */}
+      <div style={{ position:'absolute', inset:0, pointerEvents:'none', overflow:'hidden', zIndex:0 }}>
+        <div style={{ position:'absolute', top:'10%', left:'-5%', width:500, height:500, background:'rgba(181,69,27,0.18)', borderRadius:'50%', filter:'blur(100px)', animation:'blob1 12s ease-in-out infinite' }}/>
+        <div style={{ position:'absolute', bottom:'0%', right:'-5%', width:420, height:420, background:'rgba(192,120,32,0.12)', borderRadius:'50%', filter:'blur(90px)', animation:'blob2 15s ease-in-out infinite' }}/>
+        <div style={{ position:'absolute', top:'40%', right:'20%', width:280, height:280, background:'rgba(176,120,32,0.08)', borderRadius:'50%', filter:'blur(80px)', animation:'blob3 9s ease-in-out infinite' }}/>
+        {/* Faint grid */}
+        <div style={{ position:'absolute', inset:0, backgroundImage:'linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px)', backgroundSize:'60px 60px', opacity:1 }}/>
+      </div>
+
+      <div style={{ maxWidth:1280, margin:'0 auto', padding:'0 24px', position:'relative', zIndex:2, display:'flex', flexWrap:'wrap', alignItems:'center', gap:40 }}>
+
+        {/* LEFT: Copy */}
+        <div style={{ flex:'1 1 380px', maxWidth:560 }}>
+          {/* Gold label */}
+          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:28 }}>
+            <div className="gold-rule"/>
+            <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:13, color:'rgba(192,160,80,0.8)', letterSpacing:'.01em' }}>
+              Elite AI Tutoring
+            </span>
+          </div>
+
+          <h1 style={{
+            fontFamily: '"DM Serif Display",serif',
+            fontSize: 'clamp(44px,6.5vw,84px)',
+            lineHeight: 0.95,
+            letterSpacing: '-0.035em',
+            color: '#FEFDF9',
+            marginBottom: 28,
+          }}>
+            Master any<br/>
+            <em style={{ fontStyle:'italic', color:'var(--accent)' }}>subject.</em><br/>
+            <span style={{ fontFamily:'Inter,sans-serif', fontWeight:900, fontSize:'clamp(32px,4.5vw,64px)', letterSpacing:'-0.045em', lineHeight:1.05, color:'rgba(254,253,249,0.75)' }}>
+              One question<br/>at a time.
+            </span>
+          </h1>
+
+          <p style={{ fontSize:16, color:'rgba(254,253,249,0.5)', lineHeight:1.7, maxWidth:420, marginBottom:36, fontWeight:400 }}>
+            PaideIA never gives you the answer. It leads you to discover it yourself, using the Socratic method and your own course material.
+          </p>
+
+          <div style={{ display:'flex', flexWrap:'wrap', gap:14, alignItems:'center' }}>
+            <a href="/app" style={{
+              background: '#FEFDF9', color: '#100E0C',
+              fontWeight: 700, fontSize: 14, padding: '14px 30px',
+              borderRadius: 999, display: 'inline-flex', alignItems: 'center', gap: 8,
+              letterSpacing: '-0.01em', transition: 'all .18s',
+              boxShadow: '0 4px 24px rgba(254,253,249,.15)',
+            }}
+            onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-2px) scale(1.03)';e.currentTarget.style.boxShadow='0 8px 32px rgba(254,253,249,.22)';}}
+            onMouseLeave={e=>{e.currentTarget.style.transform='none';e.currentTarget.style.boxShadow='0 4px 24px rgba(254,253,249,.15)';}}>
+              Start learning free <span style={{fontSize:16}}>→</span>
+            </a>
+            <a href="#how" style={{ fontSize:13, fontWeight:600, color:'rgba(255,255,255,.35)', letterSpacing:'-0.01em', borderBottom:'1px solid rgba(255,255,255,.2)', paddingBottom:2, transition:'color .15s' }}
+               onMouseEnter={e=>e.target.style.color='rgba(255,255,255,.7)'}
+               onMouseLeave={e=>e.target.style.color='rgba(255,255,255,.35)'}>
+              See how it works
+            </a>
+          </div>
+        </div>
+
+        {/* RIGHT: Owl + mockup */}
+        <div style={{ flex:'1 1 320px', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:0 }}>
+          {/* Owl with bubble */}
+          <div style={{ display:'flex', alignItems:'flex-end', gap:14, marginBottom:20, paddingLeft:16 }}>
+            <div><Chameleon width={110} talking light/></div>
+            <SpeechBubble dark/>
+          </div>
+          <AppMockup/>
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
+/* ─────────── UNIVERSITIES ──────────────────────────────────────── */
+function Universities() {
+  return (
+    <div style={{
+      background: 'var(--bg)',
+      borderBottom: '1px solid var(--border)',
+      padding: '36px 24px',
+    }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <p style={{
+          textAlign: 'center', fontSize: 11, fontWeight: 700,
+          letterSpacing: '.12em', textTransform: 'uppercase',
+          color: 'var(--ink-3)', marginBottom: 28,
+        }}>
+          Helping students from
+        </p>
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          gap: 'clamp(28px, 6vw, 72px)', flexWrap: 'wrap',
+        }}>
+          {/* McGill */}
+          <div title="McGill University" style={{ opacity: 0.62, transition: 'opacity .2s', cursor: 'default' }}
+               onMouseEnter={e => e.currentTarget.style.opacity = 1}
+               onMouseLeave={e => e.currentTarget.style.opacity = .62}>
+            <svg width="48" height="52" viewBox="0 0 48 52" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 2 L44 10 L44 36 Q44 46 24 50 Q4 46 4 36 L4 10 Z" fill="#ED1B2F"/>
+              <path d="M24 4 L42 11.5 L42 36 Q42 45 24 48.5 Q6 45 6 36 L6 11.5 Z" fill="#C0001A"/>
+              <text x="24" y="33" textAnchor="middle" fontFamily="Georgia,serif" fontWeight="bold" fontSize="22" fill="#fff" letterSpacing="-1">M</text>
+              <path d="M14 20 L34 20" stroke="rgba(255,255,255,.3)" strokeWidth="1"/>
+            </svg>
+          </div>
+
+          {/* University of Waterloo */}
+          <div title="University of Waterloo" style={{ opacity: 0.62, transition: 'opacity .2s', cursor: 'default' }}
+               onMouseEnter={e => e.currentTarget.style.opacity = 1}
+               onMouseLeave={e => e.currentTarget.style.opacity = .62}>
+            <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+              <rect width="52" height="52" rx="4" fill="#1A1A1A"/>
+              <polygon points="26,6 46,16 46,36 26,46 6,36 6,16" fill="#FFC72C"/>
+              <polygon points="26,10 42,18 42,34 26,42 10,34 10,18" fill="#1A1A1A"/>
+              <text x="26" y="33" textAnchor="middle" fontFamily="Georgia,serif" fontWeight="bold" fontSize="18" fill="#FFC72C">W</text>
+            </svg>
+          </div>
+
+          {/* UQAM */}
+          <div title="UQAM — Université du Québec à Montréal" style={{ opacity: 0.62, transition: 'opacity .2s', cursor: 'default' }}
+               onMouseEnter={e => e.currentTarget.style.opacity = 1}
+               onMouseLeave={e => e.currentTarget.style.opacity = .62}>
+            <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+              <rect width="52" height="52" rx="26" fill="#002855"/>
+              <text x="26" y="22" textAnchor="middle" fontFamily="Arial,sans-serif" fontWeight="900" fontSize="11" fill="#fff" letterSpacing="1">UQ</text>
+              <text x="26" y="36" textAnchor="middle" fontFamily="Arial,sans-serif" fontWeight="900" fontSize="11" fill="#00B2A9" letterSpacing="1">AM</text>
+              <circle cx="26" cy="26" r="23" fill="none" stroke="rgba(255,255,255,.15)" strokeWidth="1.5"/>
+            </svg>
+          </div>
+
+          {/* Polytechnique Montréal */}
+          <div title="Polytechnique Montréal" style={{ opacity: 0.62, transition: 'opacity .2s', cursor: 'default' }}
+               onMouseEnter={e => e.currentTarget.style.opacity = 1}
+               onMouseLeave={e => e.currentTarget.style.opacity = .62}>
+            <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+              <path d="M26 2 L48 14 L48 38 L26 50 L4 38 L4 14 Z" fill="#003DA5"/>
+              <path d="M26 6 L44 16 L44 36 L26 46 L8 36 L8 16 Z" fill="none" stroke="rgba(255,255,255,.2)" strokeWidth="1"/>
+              <text x="20" y="34" fontFamily="Georgia,serif" fontWeight="bold" fontSize="24" fill="#fff">P</text>
+              <path d="M20 22 L20 36 M20 22 Q30 22 30 27 Q30 32 20 32" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
+            </svg>
+          </div>
+
+          {/* Concordia — bonus */}
+          <div title="Concordia University" style={{ opacity: 0.62, transition: 'opacity .2s', cursor: 'default' }}
+               onMouseEnter={e => e.currentTarget.style.opacity = 1}
+               onMouseLeave={e => e.currentTarget.style.opacity = .62}>
+            <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+              <rect width="52" height="52" rx="8" fill="#912338"/>
+              <text x="26" y="35" textAnchor="middle" fontFamily="Georgia,serif" fontWeight="bold" fontSize="26" fill="#fff" letterSpacing="-1">C</text>
+              <rect x="8" y="40" width="36" height="2.5" rx="1" fill="rgba(255,255,255,.25)"/>
+              <rect x="8" y="10" width="36" height="2.5" rx="1" fill="rgba(255,255,255,.25)"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────── TICKER ─────────────────────────────────────────────── */
+const TICKER_ITEMS = [
+  'Socratic method', 'LaTeX board', 'Spaced repetition', 'Your own notes',
+  '12+ subjects', 'Comprehension checks', 'Mastery tracking', 'Chain-of-thought grading',
+  'Handwriting OCR', 'AI study plan', 'Streak tracking', 'Pinpoint any concept',
+];
+
+function Ticker() {
+  const items = [...TICKER_ITEMS, ...TICKER_ITEMS];
+  return (
+    <div style={{ overflow:'hidden', borderTop:'1px solid var(--border)', borderBottom:'1px solid var(--border)', background:'var(--bg)', padding:'14px 0' }}>
+      <div style={{ display:'flex', gap:0, animation:'ticker 28s linear infinite', width:'max-content' }}>
+        {items.map((t, i) => (
+          <div key={i} style={{ display:'flex', alignItems:'center', gap:24, paddingRight:24, whiteSpace:'nowrap' }}>
+            <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:14, color:'var(--gold)' }}>ζ</span>
+            <span style={{ fontSize:13, fontWeight:500, color:'var(--ink-3)', letterSpacing:'-.01em' }}>{t}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────── STATS ──────────────────────────────────────────────── */
+function Stats() {
+  const items = [
+    { num:'500+', lbl:'Students taught' },
+    { num:'98%',  lbl:'Success rate' },
+    { num:'12+',  lbl:'Subjects covered' },
+    { num:'4.9',  lbl:'Average rating' },
+  ];
+  return (
+    <div style={{ background:'var(--bg)', borderBottom:'1px solid var(--border)' }}>
+      <div style={{ maxWidth:1280, margin:'0 auto', display:'grid', gridTemplateColumns:'repeat(2, 1fr)' }} className="md:grid-cols-4">
+        {items.map((s,i)=>(
+          <div key={i} style={{
+            padding:'36px 32px',
+            borderLeft: i>0 ? '1px solid var(--border)' : 'none',
+            borderTop: i>=2 ? '1px solid var(--border)' : 'none',
+          }}>
+            <div style={{ fontFamily:'"DM Serif Display",serif', fontSize:'clamp(38px,4.5vw,58px)', letterSpacing:'-0.03em', lineHeight:1, color:'var(--ink)', marginBottom:6 }}>{s.num}</div>
+            <div style={{ fontSize:12, color:'var(--ink-3)', fontWeight:500, letterSpacing:'.01em' }}>{s.lbl}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────── SUBJECTS ───────────────────────────────────────────── */
+const SUBJECTS = [
+  { name:'Calculus',        tag:'Mathematics',
+    gradient:'linear-gradient(135deg,#1A0800 0%,#4A1800 35%,#7A2A08 65%,#2A0C00 100%)',
+    accent:'rgba(181,69,27,.55)', glyph:'∫' },
+  { name:'Linear Algebra',  tag:'Mathematics',
+    gradient:'linear-gradient(135deg,#0A0020 0%,#1A0848 35%,#2C1070 65%,#0E0028 100%)',
+    accent:'rgba(60,40,120,.55)', glyph:'λ' },
+  { name:'Statistics',      tag:'Data Science',
+    gradient:'linear-gradient(135deg,#001018 0%,#002838 35%,#004458 65%,#001420 100%)',
+    accent:'rgba(20,80,100,.55)', glyph:'σ' },
+  { name:'Physics',         tag:'Science',
+    gradient:'linear-gradient(135deg,#000818 0%,#001040 35%,#082060 65%,#000A1A 100%)',
+    accent:'rgba(10,30,80,.55)', glyph:'Ψ' },
+  { name:'Diff. Equations', tag:'Mathematics',
+    gradient:'linear-gradient(135deg,#0F0028 0%,#220066 40%,#3A0090 70%,#0A001A 100%)',
+    accent:'rgba(100,30,200,.45)', glyph:'∂' },
+  { name:'Probability',     tag:'Mathematics',
+    gradient:'linear-gradient(135deg,#100018 0%,#280838 35%,#401058 65%,#140020 100%)',
+    accent:'rgba(80,20,100,.55)', glyph:'Ω' },
+];
+
+function SubjectCard({ name, tag, photo, gradient, accent, glyph }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <a href="/app"
+       onMouseEnter={()=>setHov(true)}
+       onMouseLeave={()=>setHov(false)}
+       style={{
+         position:'relative', overflow:'hidden', borderRadius:18,
+         aspectRatio:'4/3', display:'block', cursor:'pointer',
+         background: gradient || '#0A0A14',
+         transform: hov ? 'translateY(-6px)' : 'none',
+         transition: 'transform .28s cubic-bezier(.34,1.4,.64,1), box-shadow .28s',
+         boxShadow: hov ? '0 24px 56px rgba(0,0,0,0.28)' : '0 3px 12px rgba(0,0,0,0.1)',
+       }}>
+      {photo && (
+        <div style={{
+          position:'absolute', inset:0,
+          backgroundImage:`url(https://images.unsplash.com/photo-${photo}?w=600&q=80&fit=crop&auto=format)`,
+          backgroundSize:'cover', backgroundPosition:'center',
+          transform: hov ? 'scale(1.07)' : 'scale(1)',
+          transition:'transform .55s ease',
+        }}/>
+      )}
+      {glyph && (
+        <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', pointerEvents:'none' }}>
+          <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:'clamp(100px,14vw,160px)', color:'rgba(255,255,255,0.07)', userSelect:'none', lineHeight:1, transition:'opacity .3s', opacity: hov ? 1 : 1 }}>{glyph}</span>
+        </div>
+      )}
+      <div style={{ position:'absolute', inset:0, background:`linear-gradient(170deg, transparent 25%, ${accent} 100%)` }}/>
+      <div style={{ position:'absolute', inset:0, padding:22, display:'flex', flexDirection:'column', justifyContent:'space-between' }}>
+        <span style={{
+          fontSize:9, fontWeight:700, letterSpacing:'.2em', textTransform:'uppercase',
+          color:'rgba(255,255,255,0.65)', background:'rgba(0,0,0,0.25)',
+          backdropFilter:'blur(6px)', border:'1px solid rgba(255,255,255,0.12)',
+          display:'inline-block', padding:'4px 10px', borderRadius:20, alignSelf:'flex-start',
+        }}>{tag}</span>
+        <div>
+          <div style={{ fontFamily:'"DM Serif Display",serif', fontSize:'clamp(18px,2.2vw,26px)', color:'#fff', letterSpacing:'-0.025em', lineHeight:1.15, marginBottom:10, textShadow:'0 2px 10px rgba(0,0,0,.5)' }}>{name}</div>
+          <div style={{ fontSize:12, fontWeight:600, display:'flex', alignItems:'center', gap:5, color: hov ? 'rgba(255,255,255,.85)' : 'rgba(255,255,255,.45)', transform: hov ? 'translateX(5px)' : 'none', transition:'transform .22s, color .22s' }}>
+            Start a lesson <span style={{fontSize:14}}>→</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+function Subjects() {
+  return (
+    <section id="subjects" style={{ padding:'clamp(64px,8vw,100px) 24px', background:'var(--bg)' }}>
+      <div style={{ maxWidth:1280, margin:'0 auto' }}>
+        <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'space-between', alignItems:'flex-end', gap:20, marginBottom:48 }}>
+          <div>
+            <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:14 }}>
+              <div className="gold-rule"/>
+              <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:13, color:'var(--gold)' }}>Subjects</span>
+            </div>
+            <h2 style={{ fontFamily:'"DM Serif Display",serif', fontSize:'clamp(28px,4vw,50px)', letterSpacing:'-0.03em', lineHeight:1.05, color:'var(--ink)' }}>
+              Every subject.<br/><em style={{ fontStyle:'italic', color:'var(--gold)' }}>One</em> tutor.
+            </h2>
+          </div>
+          <a href="/app" style={{ fontSize:13, fontWeight:600, color:'var(--ink-3)', borderBottom:'1px solid var(--border)', paddingBottom:2, letterSpacing:'-0.01em', transition:'color .15s', flexShrink:0 }}
+             onMouseEnter={e=>e.target.style.color='var(--ink)'}
+             onMouseLeave={e=>e.target.style.color='var(--ink-3)'}>
+            Explore all subjects →
+          </a>
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:16 }}>
+          {SUBJECTS.map((s,i) => <SubjectCard key={i} {...s}/>)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────── HOW IT WORKS (dark) ────────────────────────────────── */
+const STEPS = [
+  { n:'01', t:'Upload your course material', d:'Drop your syllabus, class notes, or exam outline. PaideIA reads everything, including handwritten notes. Your tutor now knows exactly what your professor will test.' },
+  { n:'02', t:'Start a lesson on any topic',  d:'Pick a topic or ask directly. PaideIA teaches step by step on a LaTeX board. Highlight any text or equation and ask about it specifically.' },
+  { n:'03', t:'Get tested, lock it in',       d:'After each lesson, a short quiz targets your weak spots. Every answer gets chain-of-thought feedback so you understand exactly where your reasoning broke down.' },
+];
+
+function HowItWorks() {
+  return (
+    <section id="how" className="grain" style={{
+      position:'relative', overflow:'hidden',
+      background:'linear-gradient(135deg, #0D0B18 0%, #141030 50%, #0A0814 100%)',
+      padding:'clamp(64px,8vw,100px) 24px',
+    }}>
+      {/* Blue glow */}
+      <div style={{ position:'absolute', top:'30%', left:'10%', width:400, height:400, background:'rgba(80,60,180,0.15)', borderRadius:'50%', filter:'blur(100px)', pointerEvents:'none', zIndex:0 }}/>
+      <div style={{ position:'absolute', bottom:'0', right:'5%', width:300, height:300, background:'rgba(40,100,180,0.1)', borderRadius:'50%', filter:'blur(80px)', pointerEvents:'none', zIndex:0 }}/>
+      <div style={{ position:'absolute', inset:0, backgroundImage:'linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px)', backgroundSize:'60px 60px', zIndex:0 }}/>
+
+      <div style={{ maxWidth:1280, margin:'0 auto', position:'relative', zIndex:2 }}>
+        <div style={{ marginBottom:56 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:14 }}>
+            <div className="gold-rule"/>
+            <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:13, color:'rgba(192,160,80,0.7)' }}>Methodology</span>
+          </div>
+          <h2 style={{ fontFamily:'"DM Serif Display",serif', fontSize:'clamp(28px,4vw,50px)', letterSpacing:'-0.03em', lineHeight:1.1, color:'#FEFDF9' }}>
+            Three steps to real understanding.
+          </h2>
+        </div>
+
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(250px,1fr))', border:'1px solid rgba(255,255,255,0.07)', borderRadius:20, overflow:'hidden' }}>
+          {STEPS.map((s,i) => (
+            <div key={i} style={{ padding:'clamp(28px,4vw,44px)', borderLeft: i>0 ? '1px solid rgba(255,255,255,0.07)' : 'none', background: i===1 ? 'rgba(255,255,255,0.03)' : 'transparent' }}>
+              <div style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:13, color:'rgba(192,160,80,0.5)', marginBottom:26, letterSpacing:'.04em' }}>{s.n}</div>
+              <h3 style={{ fontFamily:'"DM Serif Display",serif', fontSize:20, letterSpacing:'-0.02em', color:'rgba(254,253,249,.9)', marginBottom:12, lineHeight:1.2 }}>{s.t}</h3>
+              <p style={{ fontSize:14, color:'rgba(255,255,255,0.4)', lineHeight:1.72 }}>{s.d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────── MODES ─────────────────────────────────────────────── */
+const MODES = [
+  {
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    ),
+    tag: 'Mode 1',
+    name: 'Tutor Chat',
+    tagline: 'Your personal Socratic tutor, always available.',
+    why: 'Most AI tools just give you the answer. PaideIA never does. It asks you the right questions until you arrive at the answer yourself. That process of discovery is what makes knowledge stick.',
+    best: 'Understanding a concept for the first time, working through a problem you\'re stuck on, or doing your daily study session.',
+    color: '#B5451B',
+    bg: 'rgba(181,69,27,0.06)',
+  },
+  {
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+      </svg>
+    ),
+    tag: 'Mode 2',
+    name: 'Quick Quiz',
+    tagline: 'Test yourself. Lock it into long-term memory.',
+    why: 'Research consistently shows that testing yourself after learning roughly doubles long-term retention compared to re-reading. PaideIA\'s quiz system targets your weakest topics specifically and gives you chain-of-thought feedback on every answer.',
+    best: 'Right after a lesson, or when you want to check if you truly understand a topic before an exam.',
+    color: '#B07820',
+    bg: 'rgba(176,120,32,0.06)',
+  },
+  {
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    ),
+    tag: 'Mode 3',
+    name: 'Exam Oracle',
+    tagline: 'Predict your exam before it happens.',
+    why: 'Upload your past exams and PaideIA runs a three-phase oracle analysis: it mines frequency and mark patterns, identifies topics that are overdue to appear, and generates a complete predicted exam with full worked solutions in LaTeX.',
+    best: '1 to 2 weeks before your exam when you need to focus your revision on the highest-impact topics.',
+    color: '#4A6ECC',
+    bg: 'rgba(74,110,204,0.06)',
+  },
+  {
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+      </svg>
+    ),
+    tag: 'Mode 4',
+    name: 'Class Mode',
+    tagline: 'A live interactive classroom that teaches any subject.',
+    why: 'Designed to feel like being in a real lesson. Professeur Sami speaks, writes on a digital board, and pulls up interactive tools in real time: Desmos graphs, GeoGebra geometry, a full periodic table, vocabulary cards, code runners, timelines, and more. Every tool appears exactly when it helps most, and disappears when it\'s done.',
+    best: 'When you want an immersive, structured lesson experience rather than a back-and-forth chat.',
+    color: '#2A9D6C',
+    bg: 'rgba(42,157,108,0.06)',
+  },
+];
+
+function ModesSection() {
+  const [active, setActive] = React.useState(0);
+  const m = MODES[active];
+  return (
+    <section id="modes" style={{ padding:'clamp(64px,8vw,100px) 24px', background:'var(--bg)' }}>
+      <div style={{ maxWidth:1280, margin:'0 auto' }}>
+
+        {/* Header */}
+        <div style={{ marginBottom:52 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:14 }}>
+            <div className="gold-rule"/>
+            <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:13, color:'var(--gold)' }}>Four ways to learn</span>
+          </div>
+          <h2 style={{ fontFamily:'"DM Serif Display",serif', fontSize:'clamp(28px,4vw,50px)', letterSpacing:'-0.03em', lineHeight:1.1, color:'var(--ink)', maxWidth:640 }}>
+            Choose the right mode<br/><em style={{ color:'var(--accent)', fontStyle:'italic' }}>for the moment.</em>
+          </h2>
+          <p style={{ fontSize:14, color:'var(--ink-2)', lineHeight:1.75, maxWidth:520, marginTop:16 }}>
+            Each mode is built for a specific phase of studying. Together they cover everything from first understanding to exam-day confidence.
+          </p>
+        </div>
+
+        {/* Tab row */}
+        <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:36, borderBottom:'1px solid var(--border)', paddingBottom:0 }}>
+          {MODES.map((mode, i) => (
+            <button key={i} onClick={()=>setActive(i)} style={{
+              padding:'10px 20px', border:'none', background:'none', cursor:'pointer',
+              fontFamily:'"Inter",sans-serif', fontSize:13, fontWeight:600,
+              color: active===i ? mode.color : 'var(--ink-3)',
+              borderBottom: active===i ? `2px solid ${mode.color}` : '2px solid transparent',
+              marginBottom:-1, transition:'all .18s', letterSpacing:'-0.01em',
+              display:'flex', alignItems:'center', gap:7,
+            }}>
+              <span style={{ color: active===i ? mode.color : 'var(--ink-3)', transition:'color .18s' }}>{mode.icon}</span>
+              {mode.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Content card */}
+        <div key={active} style={{
+          display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))', gap:0,
+          border:'1px solid var(--border)', borderRadius:20, overflow:'hidden',
+          background:'var(--bg)', animation:'fadeUp .3s ease-out both',
+        }}>
+          {/* Left: tag + description */}
+          <div style={{ padding:'clamp(32px,5vw,52px)', background: m.bg, borderRight:'1px solid var(--border)' }}>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:7, background:'rgba(255,255,255,0.7)', border:`1px solid ${m.color}33`, borderRadius:999, padding:'4px 12px', marginBottom:20 }}>
+              <span style={{ color:m.color }}>{m.icon}</span>
+              <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:11, color:m.color, letterSpacing:'.04em', fontWeight:600 }}>{m.tag}</span>
+            </div>
+            <h3 style={{ fontFamily:'"DM Serif Display",serif', fontSize:'clamp(26px,3vw,40px)', letterSpacing:'-0.03em', lineHeight:1.05, color:'var(--ink)', marginBottom:14 }}>
+              {m.name}
+            </h3>
+            <p style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:'clamp(16px,2vw,21px)', color:'var(--ink-2)', lineHeight:1.45, letterSpacing:'-0.02em', marginBottom:28 }}>
+              {m.tagline}
+            </p>
+            <a href="/app" style={{
+              display:'inline-flex', alignItems:'center', gap:8,
+              background:m.color, color:'#fff',
+              fontWeight:700, fontSize:13, padding:'12px 24px',
+              borderRadius:999, letterSpacing:'-0.01em', transition:'all .18s',
+              boxShadow:`0 4px 16px ${m.color}44`,
+            }}
+            onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-2px) scale(1.04)';}}
+            onMouseLeave={e=>{e.currentTarget.style.transform='none';}}>
+              Try {m.name} →
+            </a>
+          </div>
+
+          {/* Right: why + best for */}
+          <div style={{ padding:'clamp(32px,5vw,52px)' }}>
+            <div style={{ marginBottom:32 }}>
+              <div style={{ fontSize:10, fontWeight:700, letterSpacing:'.08em', textTransform:'uppercase', color:'var(--ink-3)', marginBottom:10 }}>Why it works</div>
+              <p style={{ fontSize:15, color:'var(--ink)', lineHeight:1.75 }}>{m.why}</p>
+            </div>
+            <div style={{ borderTop:'1px solid var(--border)', paddingTop:24 }}>
+              <div style={{ fontSize:10, fontWeight:700, letterSpacing:'.08em', textTransform:'uppercase', color:'var(--ink-3)', marginBottom:10 }}>Best used for</div>
+              <p style={{ fontSize:14, color:'var(--ink-2)', lineHeight:1.7 }}>{m.best}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
+/* ─────────── TESTIMONIALS ───────────────────────────────────────── */
+const QUOTES = [
+  { text:'PaideIA made me understand derivatives for the first time. It did not give me the answer. It made me discover it myself.', name:'Alex K.', course:'Calculus I' },
+  { text:'I uploaded my syllabus on Monday. By Friday I had quiz-ready mastery of everything. Nothing else builds understanding like this.', name:'Priya M.', course:'Linear Algebra' },
+];
+
+function Testimonials() {
+  return (
+    <section style={{ padding:'clamp(64px,8vw,100px) 24px', background:'var(--bg-2)' }}>
+      <div style={{ maxWidth:1280, margin:'0 auto' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:48 }}>
+          <div className="gold-rule"/>
+          <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:13, color:'var(--gold)' }}>Student results</span>
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))', border:'1px solid var(--border)', borderRadius:20, overflow:'hidden' }}>
+          {QUOTES.map((q,i) => (
+            <div key={i} style={{ padding:'clamp(32px,5vw,56px)', borderLeft: i>0 ? '1px solid var(--border)' : 'none', background: i===0 ? 'var(--bg)' : 'var(--bg-2)' }}>
+              <div style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:72, color:'var(--gold)', opacity:.18, lineHeight:1, marginBottom:4, userSelect:'none' }}>"</div>
+              <p style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:'clamp(17px,2vw,22px)', color:'#2C2820', lineHeight:1.45, marginBottom:28, letterSpacing:'-0.02em' }}>{q.text}</p>
+              <div style={{ fontSize:13, fontWeight:700, color:'var(--ink)' }}>{q.name}</div>
+              <div style={{ fontSize:10, color:'var(--ink-3)', marginTop:2, letterSpacing:'.06em', textTransform:'uppercase', fontWeight:600 }}>{q.course}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────── FAQ ────────────────────────────────────────────────── */
+const FAQS = [
+  { q:'How is PaideIA different from ChatGPT?', a:'PaideIA never gives you the answer. It reads your actual course notes and uses the Socratic method to guide your thinking. ChatGPT solves the problem for you. PaideIA teaches you to solve it yourself.' },
+  { q:'What subjects does PaideIA cover?', a:'Any mathematics or science subject: Calculus, Linear Algebra, Statistics, Physics, Differential Equations, Probability, and more. If it involves formulas, PaideIA can teach it with full LaTeX rendering.' },
+  { q:'Do I need to upload my notes?', a:'Not required, but highly recommended. When PaideIA has your actual syllabus and notes, it teaches exactly what your professor will test. Upload PDFs, images of handwritten notes, or plain text.' },
+  { q:'How does the mastery and quiz system work?', a:'After each lesson, PaideIA offers a quiz focused on your weakest points. It tracks mastery per topic using spaced repetition and re-quizzes you at optimal intervals so nothing leaves your long-term memory.' },
+  { q:'Is my data private?', a:'Yes. Your notes and conversation history stay on your machine. Nothing is stored on external servers beyond the AI conversation itself.' },
+];
+
+function FAQ() {
+  const [open, setOpen] = useState(null);
+  return (
+    <section id="faq" style={{ padding:'clamp(80px,10vw,120px) 24px', background:'var(--bg)' }}>
+      <div style={{ maxWidth:1280, margin:'0 auto', display:'flex', gap:'clamp(48px,8vw,96px)', flexWrap:'wrap', alignItems:'flex-start' }}>
+
+        {/* Left: sticky heading */}
+        <div style={{ flex:'0 0 min(290px,100%)', position:'sticky', top:100 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:18 }}>
+            <div className="gold-rule"/>
+            <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:13, color:'var(--gold)' }}>FAQ</span>
+          </div>
+          <h2 style={{ fontFamily:'"DM Serif Display",serif', fontSize:'clamp(32px,4vw,52px)', letterSpacing:'-0.03em', lineHeight:1.05, color:'var(--ink)', marginBottom:20 }}>
+            Common<br/><em style={{ fontStyle:'italic', color:'var(--gold)' }}>questions.</em>
+          </h2>
+          <p style={{ fontSize:14, color:'var(--ink-2)', lineHeight:1.7, maxWidth:240 }}>
+            Everything you need to know about how PaideIA teaches.
+          </p>
+        </div>
+
+        {/* Right: accordion */}
+        <div style={{ flex:'1 1 380px', borderTop:'1px solid var(--border)' }}>
+          {FAQS.map((f,i) => {
+            const isOpen = open === i;
+            return (
+              <div key={i} style={{ borderBottom:'1px solid var(--border)' }}>
+                <button onClick={()=>setOpen(isOpen?null:i)} style={{
+                  width:'100%', padding:'22px 0',
+                  display:'flex', alignItems:'flex-start', justifyContent:'space-between',
+                  gap:24, textAlign:'left', background:'none', border:'none', cursor:'pointer',
+                }}>
+                  <span style={{ fontFamily:'"DM Serif Display",serif', fontSize:17, letterSpacing:'-0.02em', color:'var(--ink)', lineHeight:1.35 }}>{f.q}</span>
+                  <span style={{
+                    width:28, height:28, borderRadius:'50%', flexShrink:0,
+                    border:`1.5px solid ${isOpen ? 'var(--ink-2)' : 'var(--border)'}`,
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    fontSize:18, fontWeight:300, color: isOpen ? 'var(--ink)' : 'var(--ink-3)',
+                    transition:'transform .22s, border-color .22s, color .22s',
+                    transform: isOpen ? 'rotate(45deg)' : 'none',
+                    userSelect:'none', marginTop:1,
+                  }}>+</span>
+                </button>
+                <div style={{ overflow:'hidden', maxHeight: isOpen ? 300 : 0, transition:'max-height .35s cubic-bezier(.4,0,.2,1)' }}>
+                  <p style={{ fontSize:15, color:'var(--ink-2)', lineHeight:1.75, paddingBottom:24, maxWidth:560 }}>{f.a}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
+/* ─────────── CTA (Cohere image 1 inspired) ──────────────────────── */
+function CTA() {
+  return (
+    <section style={{ padding:'0 24px 80px' }}>
+      <div style={{
+        maxWidth:1280, margin:'0 auto',
+        position:'relative', overflow:'hidden',
+        background:'#0C0A08',
+        borderRadius:28,
+        padding:'clamp(48px,8vw,88px) clamp(32px,6vw,72px)',
+        display:'flex', flexWrap:'wrap', alignItems:'center', justifyContent:'space-between', gap:40,
+        border:'1px solid rgba(255,255,255,0.05)',
+      }}>
+        {/* Blob background like image 1 */}
+        <div style={{ position:'absolute', inset:0, overflow:'hidden', borderRadius:28, zIndex:0 }}>
+          <div style={{ position:'absolute', top:'-20%', left:'20%', width:360, height:360, background:'rgba(181,69,27,0.35)', borderRadius:'60% 40% 70% 30%/50% 60% 40% 70%', filter:'blur(80px)', animation:'blob1 10s ease-in-out infinite' }}/>
+          <div style={{ position:'absolute', bottom:'-10%', right:'15%', width:300, height:300, background:'rgba(120,60,180,0.25)', borderRadius:'40% 60% 30% 70%/60% 40% 70% 50%', filter:'blur(70px)', animation:'blob2 13s ease-in-out infinite' }}/>
+          <div style={{ position:'absolute', top:'30%', right:'-5%', width:250, height:250, background:'rgba(192,120,32,0.2)', borderRadius:'50%', filter:'blur(60px)', animation:'blob3 8s ease-in-out infinite' }}/>
+        </div>
+
+        {/* Content */}
+        <div style={{ position:'relative', zIndex:1 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
+            <div style={{ width:32, height:1, background:'linear-gradient(90deg,transparent,rgba(192,160,80,0.7),transparent)' }}/>
+            <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:13, color:'rgba(192,160,80,0.7)' }}>Get started</span>
+          </div>
+          <h2 style={{ fontFamily:'"DM Serif Display",serif', fontSize:'clamp(30px,4.5vw,58px)', letterSpacing:'-0.035em', lineHeight:1.1, color:'#FEFDF9' }}>
+            Your study plan is<br/><em style={{ fontStyle:'italic', color:'rgba(200,150,70,.9)' }}>one click away.</em>
+          </h2>
+        </div>
+
+        <div style={{ display:'flex', flexDirection:'column', gap:12, alignItems:'flex-start', flexShrink:0, position:'relative', zIndex:1 }}>
+          <a href="/app" style={{
+            background:'#FEFDF9', color:'#100E0C',
+            fontWeight:700, fontSize:14, padding:'15px 34px',
+            borderRadius:999, display:'inline-flex', alignItems:'center', gap:8,
+            letterSpacing:'-0.01em', transition:'all .18s',
+            boxShadow:'0 4px 20px rgba(254,253,249,.15)',
+            whiteSpace:'nowrap',
+          }}
+          onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-2px) scale(1.04)';e.currentTarget.style.boxShadow='0 8px 30px rgba(254,253,249,.25)';}}
+          onMouseLeave={e=>{e.currentTarget.style.transform='none';e.currentTarget.style.boxShadow='0 4px 20px rgba(254,253,249,.15)';}}>
+            Start free today <span style={{fontSize:16}}>→</span>
+          </a>
+          <span style={{ fontSize:11, color:'rgba(254,253,249,.2)', fontWeight:500 }}>No credit card required.</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────── FOOTER ─────────────────────────────────────────────── */
+function Footer() {
+  return (
+    <footer style={{ borderTop:'1px solid var(--border)', padding:'28px 24px', background:'var(--bg)' }}>
+      <div style={{ maxWidth:1280, margin:'0 auto', display:'flex', flexWrap:'wrap', alignItems:'center', justifyContent:'space-between', gap:16 }}>
+        <a href="/" style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <ZetaLogo size={26}/>
+          <span style={{ fontFamily:'"DM Serif Display",serif', fontStyle:'italic', fontSize:17, letterSpacing:'-0.02em', color:'var(--ink)' }}>
+            Paide<span style={{ color:'var(--accent)' }}>IA</span>
+          </span>
+        </a>
+        <p style={{ fontSize:12, color:'var(--ink-3)' }}>Adaptive AI tutoring for mathematics and science.</p>
+        <p style={{ fontSize:11, color:'var(--border)', fontWeight:400 }}>2026 PaideIA</p>
+      </div>
+    </footer>
+  );
+}
+
+/* ─────────── APP ────────────────────────────────────────────────── */
+function App() {
+  return (
+    <React.Fragment>
+      <Nav/>
+      <main>
+        <Hero/>
+        <Ticker/>
+        <Stats/>
+        <Universities/>
+        <Subjects/>
+        <HowItWorks/>
+        <ModesSection/>
+        <Testimonials/>
+        <FAQ/>
+        <CTA/>
+      </main>
+      <Footer/>
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

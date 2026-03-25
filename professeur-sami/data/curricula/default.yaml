@@ -1,0 +1,165 @@
+# Default Math Curriculum
+# Edit this file to match your actual course syllabus
+# Each topic has subtopics and mastery threshold (0.0 - 1.0)
+
+name: "High School / University Mathematics"
+level: "intermediate"
+
+units:
+  - id: "algebra"
+    name: "Algebra & Functions"
+    mastery_threshold: 0.80
+    topics:
+      - id: "linear_equations"
+        name: "Linear Equations & Systems"
+        subtopics:
+          - "Solving one-variable equations"
+          - "Systems of 2 equations (substitution, elimination)"
+          - "Systems of 3 equations (row reduction)"
+
+      - id: "quadratics"
+        name: "Quadratic Functions"
+        subtopics:
+          - "Factoring (GCF, difference of squares, trinomials)"
+          - "Quadratic formula & discriminant"
+          - "Completing the square"
+          - "Graphing: vertex, axis of symmetry, intercepts"
+
+      - id: "polynomials"
+        name: "Polynomials"
+        subtopics:
+          - "Polynomial long division"
+          - "Synthetic division"
+          - "Rational root theorem"
+          - "Factor theorem"
+
+      - id: "rational_functions"
+        name: "Rational Functions"
+        subtopics:
+          - "Simplifying rational expressions"
+          - "Asymptotes (vertical, horizontal, oblique)"
+          - "Solving rational equations"
+
+  - id: "functions"
+    name: "Functions & Transformations"
+    mastery_threshold: 0.80
+    topics:
+      - id: "function_basics"
+        name: "Function Fundamentals"
+        subtopics:
+          - "Domain & range"
+          - "Function notation"
+          - "Composition of functions"
+          - "Inverse functions"
+
+      - id: "transformations"
+        name: "Graphical Transformations"
+        subtopics:
+          - "Translations (horizontal/vertical shifts)"
+          - "Reflections"
+          - "Stretches & compressions"
+          - "Combined transformations"
+
+      - id: "exponential_log"
+        name: "Exponential & Logarithmic Functions"
+        subtopics:
+          - "Properties of exponents"
+          - "Exponential growth/decay models"
+          - "Logarithm laws"
+          - "Solving exponential/log equations"
+          - "Change of base formula"
+
+  - id: "trigonometry"
+    name: "Trigonometry"
+    mastery_threshold: 0.75
+    topics:
+      - id: "trig_basics"
+        name: "Trigonometric Functions"
+        subtopics:
+          - "Unit circle (radians & degrees)"
+          - "sin, cos, tan and their reciprocals"
+          - "Reference angles"
+          - "CAST rule / quadrant signs"
+
+      - id: "trig_identities"
+        name: "Trigonometric Identities"
+        subtopics:
+          - "Pythagorean identities"
+          - "Sum & difference formulas"
+          - "Double angle formulas"
+          - "Half angle formulas"
+
+      - id: "trig_equations"
+        name: "Solving Trig Equations"
+        subtopics:
+          - "General solutions"
+          - "Restricted domain solutions"
+
+  - id: "calculus"
+    name: "Calculus"
+    mastery_threshold: 0.75
+    topics:
+      - id: "limits"
+        name: "Limits & Continuity"
+        subtopics:
+          - "Limit laws"
+          - "One-sided limits"
+          - "Limits at infinity"
+          - "Continuity & discontinuities"
+          - "L'Hopital's rule"
+
+      - id: "derivatives"
+        name: "Differentiation"
+        subtopics:
+          - "Definition of derivative"
+          - "Power rule, product rule, quotient rule"
+          - "Chain rule"
+          - "Implicit differentiation"
+          - "Related rates"
+          - "Derivatives of trig, exp, log"
+
+      - id: "applications_derivatives"
+        name: "Applications of Derivatives"
+        subtopics:
+          - "Finding extrema (critical points)"
+          - "First & second derivative tests"
+          - "Concavity & inflection points"
+          - "Optimization problems"
+          - "Curve sketching"
+
+      - id: "integrals"
+        name: "Integration"
+        subtopics:
+          - "Antiderivatives"
+          - "Riemann sums"
+          - "Fundamental Theorem of Calculus"
+          - "U-substitution"
+          - "Integration by parts"
+          - "Area between curves"
+
+  - id: "statistics"
+    name: "Statistics & Probability"
+    mastery_threshold: 0.80
+    topics:
+      - id: "descriptive_stats"
+        name: "Descriptive Statistics"
+        subtopics:
+          - "Mean, median, mode"
+          - "Variance & standard deviation"
+          - "Interquartile range"
+          - "Box plots & histograms"
+
+      - id: "probability"
+        name: "Probability"
+        subtopics:
+          - "Sample spaces & events"
+          - "Conditional probability"
+          - "Bayes theorem"
+          - "Combinatorics (permutations, combinations)"
+
+      - id: "distributions"
+        name: "Distributions"
+        subtopics:
+          - "Binomial distribution"
+          - "Normal distribution & z-scores"
+          - "Central limit theorem"
