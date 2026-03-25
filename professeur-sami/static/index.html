@@ -1028,6 +1028,166 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--sa
   80%{filter:hue-rotate(-10deg) saturate(1.05)}
 }
 .chameleon-shift{animation:chameleonShift 12s ease-in-out infinite, owlFloat 5s ease-in-out infinite}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE — ≤768px
+   ═══════════════════════════════════════════════════════════════════ */
+@media(max-width:768px){
+  :root{--sidebar:0px;--nav-h:52px}
+
+  /* Global */
+  html,body{font-size:14px}
+
+  /* Top nav */
+  #topnav{padding:0 16px}
+  .nav-title{font-size:13px}
+  .nav-right .btn-sm{font-size:12px;padding:6px 13px}
+
+  /* ── ONBOARDING ─────────────────────────────────── */
+  #s-onboard{padding:24px 16px}
+  .ob-wrap{max-width:100%}
+  .ob-card{padding:22px 18px}
+  .ob-owl{width:72px;margin-bottom:14px}
+  .ob-title{font-size:26px}
+
+  /* ── DASHBOARD ──────────────────────────────────── */
+  #s-dash{
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .dash-sidebar{
+    flex-direction:row;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
+    width:100%;flex-shrink:0;
+    padding:10px 12px;gap:6px;
+    border-right:none;border-bottom:1px solid var(--border);
+    scrollbar-width:none;
+  }
+  .dash-sidebar::-webkit-scrollbar{display:none}
+
+  /* Turn sidebar nav into horizontal pill row */
+  .sidebar-nav{flex-direction:row;gap:4px;margin-bottom:0;flex-shrink:0}
+  .sidebar-nav a{
+    flex-direction:column;gap:3px;padding:7px 12px;
+    font-size:10px;white-space:nowrap;
+    border-radius:10px;
+  }
+  .sidebar-nav a svg{width:16px;height:16px}
+
+  /* Hide non-essential sidebar content on mobile */
+  .sidebar-section-label,.mastery-sidebar,.streak-badge,.sidebar-footer{display:none}
+
+  /* Main dash */
+  .dash-main{padding:20px 16px;overflow-y:auto;flex:1}
+  .dash-greeting h1{font-size:22px}
+
+  /* Today card stacks */
+  .today-card{flex-direction:column;align-items:flex-start;padding:20px;gap:12px}
+  .tc-owl{width:56px;position:absolute;right:20px;top:20px}
+  .today-card{position:relative}
+  .tc-title{font-size:19px}
+
+  /* Grids collapse */
+  .week-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .progress-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .prog-num{font-size:22px}
+
+  /* ── LESSON ─────────────────────────────────────── */
+  .lesson-header{padding:0 14px;height:48px}
+  .lh-crumb{font-size:12px}
+  .lh-right{gap:6px}
+  .lh-right .btn-sm{font-size:11px;padding:6px 10px}
+
+  /* Hide the left panel (owl + info) — saves precious vertical space */
+  .lesson-left{display:none}
+  .lesson-body{grid-template-columns:1fr}
+
+  /* More breathing room on scroll */
+  .lesson-scroll{padding:20px 16px 100px}
+
+  /* Bubbles narrower on phone */
+  .tutor-bubble{padding:14px 15px}
+
+  /* Input footer */
+  .lesson-footer{padding:10px 12px 10px;padding-bottom:max(10px,env(safe-area-inset-bottom))}
+  .lf-wrap{padding:8px 10px 8px 14px}
+  #lesson-input{font-size:16px}/* exactly 16px — prevents iOS Safari auto-zoom */
+  .lf-mic,.lf-send{width:34px;height:34px}
+
+  /* Interrupt / timer pill */
+  #interrupt-btn{font-size:11px;padding:6px 12px}
+  .timer-pill{font-size:11px;padding:4px 10px}
+
+  /* ── CLASS MODE ─────────────────────────────────── */
+  #s-class{flex-direction:column}
+
+  /* Hide chameleon side panel — saves ~200px of width on phones */
+  .class-cham{display:none !important;width:0 !important;padding:0 !important}
+
+  /* Class header */
+  .class-header{padding:0 12px;height:48px}
+  .class-topic-pill{font-size:10px;padding:4px 10px}
+
+  /* Board gets full width */
+  .class-content-area{flex-direction:column}
+  .class-board-col{flex:1;min-height:0}
+  .class-board{padding:14px 14px;font-size:13px}
+  .be-title{font-size:19px}
+  .class-board-top{padding:8px 12px}
+
+  /* Tool column becomes full-width bottom sheet instead of side panel */
+  .class-tool-col{
+    position:fixed;bottom:0;left:0;right:0;
+    width:100% !important;
+    height:0;
+    transition:height .35s cubic-bezier(.4,0,.2,1);
+    border-left:none;border-top:1.5px solid #e5e0d4;
+    z-index:200;
+    border-radius:20px 20px 0 0;
+    box-shadow:0 -8px 40px rgba(0,0,0,.12);
+  }
+  .class-tool-col.open{
+    width:100% !important;
+    height:58vh;
+  }
+  .ctp-header{border-radius:20px 20px 0 0}
+
+  /* Class footer */
+  .class-footer{padding:8px 12px;padding-bottom:max(8px,env(safe-area-inset-bottom))}
+  .class-input-wrap{flex:1}
+  #class-input{font-size:16px}/* exactly 16px — prevents iOS Safari auto-zoom */
+
+  /* Tool dock — bigger tap targets on mobile */
+  .class-tool-dock{gap:4px}
+  .td-btn{width:34px;height:34px;font-size:14px}
+
+  /* ── QUIZ ───────────────────────────────────────── */
+  #s-quiz{padding:0}
+  .quiz-header{padding:14px 16px}
+  .quiz-body{padding:16px}
+
+  /* ── EXAM ORACLE ────────────────────────────────── */
+  .pred-layout{flex-direction:column}
+  .pred-sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border)}
+  .pred-main{padding:16px}
+
+  /* ── TOASTS ─────────────────────────────────────── */
+  #toasts{bottom:80px;right:12px;left:12px}
+  .toast{min-width:0;font-size:12px}
+
+  /* ── OFFLINE BANNER ──────────────────────────────── */
+  #offline-banner{font-size:11px;padding:7px 14px}
+}
+
+/* ── Extra small (phone portrait ≤ 420px) ─────────── */
+@media(max-width:420px){
+  .week-grid{grid-template-columns:repeat(2,1fr)}
+  .lh-right .status-pill{display:none}
+  .today-card{padding:16px}
+  .tc-title{font-size:17px}
+  .dash-main{padding:16px 12px}
+  .lesson-scroll{padding:16px 12px 100px}
+  .ob-card{padding:18px 14px}
+  .class-tool-col.open{height:65vh}
+}
 </style>
 </head>
 <body>
