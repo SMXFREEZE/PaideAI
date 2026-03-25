@@ -3404,18 +3404,30 @@ function _parseClassSegments(text) {
 
 // ── Play segments sequentially ─────────────────────────────────────
 async function _playSegments(segments) {
-  for (const seg of segments) {
+  for (let i = 0; i < segments.length; i++) {
+    const seg = segments[i];
+
     if (seg.type === 'speech') {
       _setClassOwlState('talking');
       document.getElementById('class-subtitle').textContent = seg.content;
       await _classSpeak(seg.content);
+
     } else if (seg.type === 'tool_close') {
       closeTool();
-      await _delay(300);
+      await _delay(400);
+
     } else if (seg.type.startsWith('tool_')) {
       const toolType = seg.type.slice(5); // strip 'tool_'
       openTool(toolType, seg.content);
-      await _delay(600);
+
+      // Lookahead: if the next segment is a [SPEECH], let the speech play while
+      // the tool is already visible — just a short init delay so the tool renders.
+      // If the next segment is ANOTHER tool or TOOL_CLOSE, hold for 2.4 s so the
+      // user actually has time to see the tool before it's replaced.
+      const next = segments[i + 1];
+      const nextIsSpeech = next && next.type === 'speech';
+      await _delay(nextIsSpeech ? 420 : 2400);
+
     } else {
       addBoardElement(seg.type, seg.content);
       await _delay(180);
