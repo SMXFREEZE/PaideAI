@@ -2229,6 +2229,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--sa
           <span class="nav-title">PaideIA</span>
         </a>
         <div class="class-topic-pill" id="class-topic-pill">Class Mode</div>
+        <button type="button" id="class-stop-btn" class="btn btn-secondary btn-sm" onclick="stopClass()" style="display:none;font-size:12px;padding:6px 14px">⏹ Stop</button>
         <button type="button" class="class-end-btn" onclick="goHome()">✕ End Class</button>
       </div>
 
@@ -3427,6 +3428,7 @@ function openClassMode(topic) {
   _classStreaming = false;
   document.getElementById('class-subtitle').textContent = 'Ready — class is starting…';
   document.getElementById('class-send-btn').disabled = false;
+  document.getElementById('class-stop-btn').style.display = 'none';
   document.getElementById('class-input').value = '';
 
   // Init draw canvas
@@ -3598,6 +3600,8 @@ async function _playSegments(segments) {
   _setClassOwlState('idle');
   document.getElementById('class-subtitle').textContent = '';
   document.getElementById('class-send-btn').disabled = false;
+  const stopBtn = document.getElementById('class-stop-btn');
+  if (stopBtn) stopBtn.style.display = 'none';
 }
 
 function _delay(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -3640,12 +3644,23 @@ function _setClassOwlState(state) {
   }
 }
 
+function stopClass() {
+  if (_abortCtrl) { _abortCtrl.abort(); _abortCtrl = null; }
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  _classStreaming = false;
+  document.getElementById('class-send-btn').disabled = false;
+  document.getElementById('class-stop-btn').style.display = 'none';
+  document.getElementById('class-subtitle').textContent = 'Stopped.';
+  _setClassOwlState('idle');
+}
+
 // ── Stream from /class-chat ────────────────────────────────────────
 async function _streamClass(msg, drawingBlob) {
   if (_classStreaming) return;
   _classStreaming = true;
   _abortCtrl = new AbortController();
   document.getElementById('class-send-btn').disabled = true;
+  document.getElementById('class-stop-btn').style.display = 'flex';
   document.getElementById('class-subtitle').textContent = 'Thinking…';
   _setClassOwlState('idle');
 
@@ -3689,16 +3704,20 @@ async function _streamClass(msg, drawingBlob) {
     }
     _classStreaming = false;
     document.getElementById('class-send-btn').disabled = false;
+    document.getElementById('class-stop-btn').style.display = 'none';
     thinkEl.remove();
     return;
   }
 
   thinkEl.remove();
-  _classStreaming = false;
-
-  // Parse and play segments
+  // Keep _classStreaming = true until _playSegments fully completes
+  // so the send button stays locked while the AI is still speaking/drawing.
   const segments = _parseClassSegments(full);
-  await _playSegments(segments);
+  try {
+    await _playSegments(segments);
+  } finally {
+    _classStreaming = false;
+  }
 }
 
 // ── Student interaction ────────────────────────────────────────────
