@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \":*)",
+      "Bash(find c:/Users/sami/.gemini/antigravity/playground/stellar-meteoroid/lyric-engine -name *train* -o -name *sft*)",
+      "Bash(python:*)",
+      "Read(//c/Users/sami/.claude/projects/c--Users-sami--gemini-antigravity-playground-stellar-meteoroid/memory/**)"
+    ]
+  }
+}

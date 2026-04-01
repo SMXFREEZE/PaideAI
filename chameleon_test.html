@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"/><title>Chameleon Test</title>
+<style>
+body{background:#1a1612;display:flex;align-items:center;justify-content:center;min-height:100vh;gap:40px;flex-wrap:wrap;font-family:sans-serif}
+.card{background:#0c0a08;border-radius:16px;padding:40px;text-align:center}
+.card h3{color:#fff;margin-top:16px;font-size:14px}
+@keyframes owlFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes owlBlink{0%,88%,100%{transform:scaleY(0)}93%{transform:scaleY(1)}}
+@keyframes tongueFlick{0%,70%,100%{transform:scaleX(0)}80%{transform:scaleX(1)}}
+.float{animation:owlFloat 5s ease-in-out infinite}
+</style></head><body>
+
+<div class="card">
+<svg width="200" viewBox="0 0 240 240" class="float" style="overflow:visible;filter:drop-shadow(0 8px 24px rgba(0,0,0,0.3))" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shadow -->
+  <ellipse cx="120" cy="234" rx="58" ry="6" fill="rgba(0,0,0,0.12)"/>
+
+  <!-- ═══ BRANCH ═══ -->
+  <path d="M5,205 Q60,198 120,196 Q180,198 235,205" stroke="#3E2208" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <path d="M5,203 Q60,196 120,194 Q180,196 235,203" stroke="#5A3208" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M8,201 Q60,194 120,192 Q180,194 232,201" stroke="#7A4810" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <!-- Branch knots -->
+  <ellipse cx="50" cy="200" rx="3" ry="2" fill="#3E2208" opacity=".5"/>
+  <ellipse cx="155" cy="196" rx="3.5" ry="2" fill="#3E2208" opacity=".5"/>
+  <!-- Small twig -->
+  <path d="M195,202 Q200,190 205,183" stroke="#5A3208" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M203,185 Q208,180 206,183" stroke="#5A3208" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+  <!-- ═══ TAIL SPIRAL (behind body) ═══ -->
+  <path d="M62,155 C30,158 8,185 22,210 C36,234 74,232 90,212 C106,192 88,168 68,170 C50,172 44,190 58,202 C70,210 80,200 76,190 C73,182 66,183 67,188"
+        stroke="#7A4810" stroke-width="14" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M62,155 C30,158 8,185 22,210 C36,234 74,232 90,212 C106,192 88,168 68,170 C50,172 44,190 58,202 C70,210 80,200 76,190 C73,182 66,183 67,188"
+        stroke="#A06018" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M62,155 C30,158 8,185 22,210 C36,234 74,232 90,212 C106,192 88,168 68,170 C50,172 44,190 58,202 C70,210 80,200 76,190 C73,182 66,183 67,188"
+        stroke="#C07830" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+  <!-- ═══ BACK LEG ═══ -->
+  <path d="M92,175 Q89,185 86,200" stroke="#7A4810" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M92,175 Q89,185 86,200" stroke="#A06018" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <!-- Back foot toes (zygodactyl) -->
+  <path d="M79,202 Q82,197 86,200" stroke="#6A3808" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M86,200 Q90,197 93,202" stroke="#6A3808" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="79" cy="202" r="2" fill="#6A3808"/>
+  <circle cx="93" cy="202" r="2" fill="#6A3808"/>
+
+  <!-- ═══ BODY ═══ -->
+  <ellipse cx="118" cy="142" rx="56" ry="44" fill="#A06018"/>
+  <!-- Body top highlight -->
+  <ellipse cx="118" cy="135" rx="48" ry="33" fill="#B07020" opacity=".45"/>
+
+  <!-- Belly (warm golden crescent) -->
+  <path d="M70,158 Q118,182 166,158 Q158,174 118,178 Q78,174 70,158Z" fill="#EEC060"/>
+  <!-- Belly highlight -->
+  <path d="M80,160 Q118,176 156,160 Q150,170 118,173 Q86,170 80,160Z" fill="#F0D070" opacity=".4"/>
+
+  <!-- Body pattern stripes -->
+  <path d="M78,124 Q118,112 158,124" stroke="#C8983A" stroke-width="1.6" fill="none" opacity=".45"/>
+  <path d="M74,138 Q118,126 162,138" stroke="#C8983A" stroke-width="1.6" fill="none" opacity=".45"/>
+  <path d="M76,152 Q118,140 160,152" stroke="#C8983A" stroke-width="1.6" fill="none" opacity=".45"/>
+
+  <!-- Scale/spot details -->
+  <circle cx="98" cy="130" r="3.5" fill="#C8983A" opacity=".18"/>
+  <circle cx="135" cy="126" r="4" fill="#C8983A" opacity=".15"/>
+  <circle cx="108" cy="148" r="2.5" fill="#C8983A" opacity=".15"/>
+  <circle cx="145" cy="142" r="3" fill="#C8983A" opacity=".12"/>
+
+  <!-- ═══ DORSAL RIDGE — spines anchored ON the body ellipse ═══ -->
+  <!-- Body ellipse: cx=118, cy=142, rx=56, ry=44
+       y_top(x) = 142 - 44 * sqrt(1 - ((x-118)/56)^2)
+       x=74→y≈115, x=82→y≈108, x=90→y≈104, x=98→y≈101,
+       x=106→y≈99, x=114→y≈98, x=118→y=98, x=122→y≈98,
+       x=130→y≈99, x=138→y≈101, x=146→y≈104, x=154→y≈108 -->
+  <g fill="#7A4810" opacity=".7">
+    <polygon points="74,115  82,108  78,97"/>   <!-- spine 1 (leftmost, shorter) -->
+    <polygon points="82,108  90,104  86,92"/>   <!-- spine 2 -->
+    <polygon points="90,104  98,101  94,88"/>   <!-- spine 3 -->
+    <polygon points="98,101  106,99  102,85"/>  <!-- spine 4 -->
+    <polygon points="106,99  114,98  110,83"/>  <!-- spine 5 -->
+    <polygon points="114,98  122,98  118,82"/>  <!-- spine 6 (apex — tallest) -->
+    <polygon points="122,98  130,99  126,83"/>  <!-- spine 7 -->
+    <polygon points="130,99  138,101 134,85"/>  <!-- spine 8 -->
+    <polygon points="138,101 146,104 142,89"/>  <!-- spine 9 -->
+    <polygon points="146,104 154,108 150,93"/>  <!-- spine 10 (rightmost, shorter) -->
+  </g>
+  <!-- Spine center-line highlight accents -->
+  <g stroke="#C07830" stroke-width="1" fill="none" opacity=".3">
+    <line x1="78" y1="97"  x2="78" y2="111"/>
+    <line x1="86" y1="92"  x2="86" y2="106"/>
+    <line x1="94" y1="88"  x2="94" y2="102"/>
+    <line x1="102" y1="85" x2="102" y2="100"/>
+    <line x1="110" y1="83" x2="110" y2="98"/>
+    <line x1="118" y1="82" x2="118" y2="98"/>
+    <line x1="126" y1="83" x2="126" y2="98"/>
+    <line x1="134" y1="85" x2="134" y2="100"/>
+    <line x1="142" y1="89" x2="142" y2="102"/>
+    <line x1="150" y1="93" x2="150" y2="106"/>
+  </g>
+
+  <!-- ═══ FRONT LEG ═══ -->
+  <path d="M148,174 Q149,184 150,200" stroke="#7A4810" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M148,174 Q149,184 150,200" stroke="#A06018" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <!-- Front foot toes -->
+  <path d="M143,202 Q146,197 150,200" stroke="#6A3808" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M150,200 Q154,197 157,202" stroke="#6A3808" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="143" cy="202" r="2" fill="#6A3808"/>
+  <circle cx="157" cy="202" r="2" fill="#6A3808"/>
+
+  <!-- ═══ HEAD ═══ -->
+  <circle cx="170" cy="118" r="34" fill="#A06018"/>
+  <!-- Face lighter area -->
+  <circle cx="172" cy="116" r="28" fill="#B87028"/>
+  <!-- Jaw / chin area -->
+  <path d="M175,140 Q192,142 198,132 Q200,128 196,124" fill="#A06018"/>
+
+  <!-- ═══ CASQUE / HEAD CREST ═══ -->
+  <path d="M148,98 Q150,62 168,82 Q160,68 155,80 Z" fill="#7A4810"/>
+  <path d="M150,94 Q152,66 164,80" stroke="#8A5015" stroke-width="1.8" fill="none" opacity=".6"/>
+  <!-- Casque ridge lines -->
+  <path d="M152,88 Q154,72 160,80" stroke="#5A3208" stroke-width="1" fill="none" opacity=".3"/>
+
+  <!-- ═══ SNOUT ═══ -->
+  <path d="M194,112 Q210,116 208,128 Q206,136 196,138" fill="#A06018"/>
+  <path d="M196,114 Q206,118 204,126 Q202,132 196,134" fill="#B87028"/>
+  <!-- Mouth line -->
+  <path d="M198,128 Q206,128 210,126" stroke="#5A3208" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Nostril -->
+  <circle cx="202" cy="118" r="1.8" fill="#5A3208" opacity=".5"/>
+
+  <!-- ═══ EYE (most important detail!) ═══ -->
+  <!-- Eye turret bump -->
+  <circle cx="176" cy="108" r="22" fill="#C07830" opacity=".4"/>
+  <!-- Eye white -->
+  <circle cx="176" cy="108" r="18" fill="#FFFDF5"/>
+  <!-- Iris outer -->
+  <circle cx="176" cy="108" r="14" fill="#D09010"/>
+  <!-- Iris inner ring -->
+  <circle cx="176" cy="108" r="11" fill="#C08010" opacity=".6"/>
+  <!-- Pupil -->
+  <ellipse cx="176" cy="108" rx="5" ry="7.5" fill="#1A1816"/>
+  <!-- Eye highlights -->
+  <circle cx="180" cy="103" r="3.5" fill="white"/>
+  <circle cx="173" cy="113" r="1.8" fill="white" opacity=".45"/>
+  <!-- Eye outer ring -->
+  <circle cx="176" cy="108" r="20" fill="none" stroke="#5A3208" stroke-width="2.8"/>
+
+  <!-- Eyelid for blink -->
+  <clipPath id="eye-clip"><circle cx="176" cy="108" r="18"/></clipPath>
+  <rect x="157" y="90" width="38" height="18" fill="#B87028"
+        clip-path="url(#eye-clip)"
+        style="animation:owlBlink 5s ease-in-out infinite;transform-origin:center top;transform-box:fill-box"/>
+
+  <!-- ═══ GRADUATION CAP (Mortarboard) — Detailed ═══ -->
+  <!-- Cap base (the band that sits on the head) -->
+  <path d="M150,82 Q152,74 172,72 Q192,74 194,82 Q192,86 172,88 Q152,86 150,82Z" fill="#222"/>
+  <path d="M151,82 Q153,76 172,74 Q191,76 193,82" fill="#2a2a2a"/>
+  <!-- Mortarboard top (rhombus/diamond shape for 3D perspective) -->
+  <polygon points="172,56 204,72 172,82 140,72" fill="#1A1816"/>
+  <!-- Board top surface highlight -->
+  <polygon points="172,58 200,72 172,80 144,72" fill="#252525"/>
+  <!-- Board edge thickness (front edge) -->
+  <polygon points="140,72 172,82 172,84 140,74" fill="#111"/>
+  <polygon points="172,82 204,72 204,74 172,84" fill="#0a0a0a"/>
+  <!-- Button at center top of board -->
+  <circle cx="172" cy="72" r="3" fill="#333"/>
+  <circle cx="172" cy="72" r="1.8" fill="#444"/>
+  <!-- Tassel cord from button -->
+  <path d="M172,72 Q178,74 192,66 Q200,60 202,52" stroke="#B5451B" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Tassel end (multiple hanging threads) -->
+  <g stroke="#B5451B" stroke-width="1.6" stroke-linecap="round" fill="none">
+    <line x1="202" y1="52" x2="199" y2="42"/>
+    <line x1="202" y1="52" x2="201" y2="41"/>
+    <line x1="202" y1="52" x2="203" y2="41"/>
+    <line x1="202" y1="52" x2="205" y2="42"/>
+  </g>
+  <!-- Tassel knot -->
+  <circle cx="202" cy="52" r="3" fill="#B5451B"/>
+  <circle cx="202" cy="52" r="1.5" fill="#D06030"/>
+</svg>
+<h3 style="color:#fff">PaideIA Chameleon Mascot</h3>
+</div>
+
+<div class="card">
+<svg width="100" viewBox="0 0 240 240" class="float" style="overflow:visible;filter:drop-shadow(0 8px 24px rgba(254,253,249,0.18))" xmlns="http://www.w3.org/2000/svg">
+  <!-- Same SVG at smaller size to test scaling -->
+  <ellipse cx="120" cy="234" rx="58" ry="6" fill="rgba(255,255,255,0.1)"/>
+  <path d="M5,205 Q60,198 120,196 Q180,198 235,205" stroke="#3E2208" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <path d="M5,203 Q60,196 120,194 Q180,196 235,203" stroke="#5A3208" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M8,201 Q60,194 120,192 Q180,194 232,201" stroke="#7A4810" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M62,155 C30,158 8,185 22,210 C36,234 74,232 90,212 C106,192 88,168 68,170 C50,172 44,190 58,202 C70,210 80,200 76,190 C73,182 66,183 67,188" stroke="#7A4810" stroke-width="14" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M62,155 C30,158 8,185 22,210 C36,234 74,232 90,212 C106,192 88,168 68,170 C50,172 44,190 58,202 C70,210 80,200 76,190 C73,182 66,183 67,188" stroke="#A06018" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M62,155 C30,158 8,185 22,210 C36,234 74,232 90,212 C106,192 88,168 68,170 C50,172 44,190 58,202 C70,210 80,200 76,190 C73,182 66,183 67,188" stroke="#C07830" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M92,175 Q89,185 86,200" stroke="#A06018" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="118" cy="142" rx="56" ry="44" fill="#A06018"/>
+  <ellipse cx="118" cy="135" rx="48" ry="33" fill="#B07020" opacity=".45"/>
+  <path d="M70,158 Q118,182 166,158 Q158,174 118,178 Q78,174 70,158Z" fill="#EEC060"/>
+  <!-- Dorsal spines (anchored on body ellipse) -->
+  <g fill="#7A4810" opacity=".7">
+    <polygon points="74,115 82,108 78,97"/>
+    <polygon points="90,104 98,101 94,88"/>
+    <polygon points="106,99 114,98 110,83"/>
+    <polygon points="122,98 130,99 126,83"/>
+    <polygon points="138,101 146,104 142,89"/>
+    <polygon points="146,104 154,108 150,93"/>
+  </g>
+  <path d="M148,174 Q149,184 150,200" stroke="#A06018" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <circle cx="170" cy="118" r="34" fill="#A06018"/>
+  <circle cx="172" cy="116" r="28" fill="#B87028"/>
+  <path d="M148,98 Q150,62 168,82 Q160,68 155,80 Z" fill="#7A4810"/>
+  <path d="M194,112 Q210,116 208,128 Q206,136 196,138" fill="#A06018"/>
+  <path d="M196,114 Q206,118 204,126 Q202,132 196,134" fill="#B87028"/>
+  <path d="M198,128 Q206,128 210,126" stroke="#5A3208" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <circle cx="176" cy="108" r="22" fill="#C07830" opacity=".4"/>
+  <circle cx="176" cy="108" r="18" fill="#FFFDF5"/>
+  <circle cx="176" cy="108" r="14" fill="#D09010"/>
+  <circle cx="176" cy="108" r="11" fill="#C08010" opacity=".6"/>
+  <ellipse cx="176" cy="108" rx="5" ry="7.5" fill="#1A1816"/>
+  <circle cx="180" cy="103" r="3.5" fill="white"/>
+  <circle cx="176" cy="108" r="20" fill="none" stroke="#5A3208" stroke-width="2.8"/>
+  <!-- Graduation cap -->
+  <path d="M150,82 Q152,74 172,72 Q192,74 194,82 Q192,86 172,88 Q152,86 150,82Z" fill="#222"/>
+  <polygon points="172,56 204,72 172,82 140,72" fill="#1A1816"/>
+  <polygon points="172,58 200,72 172,80 144,72" fill="#252525"/>
+  <polygon points="140,72 172,82 172,84 140,74" fill="#111"/>
+  <polygon points="172,82 204,72 204,74 172,84" fill="#0a0a0a"/>
+  <circle cx="172" cy="72" r="3" fill="#333"/>
+  <path d="M172,72 Q178,74 192,66 Q200,60 202,52" stroke="#B5451B" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="202" cy="52" r="3" fill="#B5451B"/>
+  <g stroke="#B5451B" stroke-width="1.4" stroke-linecap="round" fill="none">
+    <line x1="202" y1="52" x2="199" y2="42"/>
+    <line x1="202" y1="52" x2="201" y2="41"/>
+    <line x1="202" y1="52" x2="203" y2="41"/>
+    <line x1="202" y1="52" x2="205" y2="42"/>
+  </g>
+</svg>
+<h3 style="color:#fff">Small (100px)</h3>
+</div>
+
+</body></html>
