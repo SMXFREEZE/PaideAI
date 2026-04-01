@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sami El-Figha | AI Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── RESET ──────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── TOKENS ─────────────────────────────── */
+    :root {
+      --ink:      #F0EDE6;
+      --ink-2:    #8A8880;
+      --ink-3:    #48464A;
+      --bg:       #060608;
+      --bg-2:     #0C0C10;
+      --bg-3:     #131318;
+      --cream:    #EDE9DF;
+      --fire:     #FF6B35;
+      --fire-dim: rgba(255,107,53,0.08);
+      --border:   rgba(255,255,255,0.07);
+      --border-2: rgba(255,255,255,0.04);
+      --fd:       'Syne', sans-serif;
+      --fm:       'IBM Plex Mono', monospace;
+      --fb:       'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--fb);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── GRAIN OVERLAY (animated, film-like) ── */
+    .grain {
+      position: fixed; inset: -50%; z-index: 9998;
+      width: 200%; height: 200%;
+      pointer-events: none; opacity: 0.038;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.85' numOctaves='4' type='fractalNoise' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+      animation: grain-drift 8s steps(10) infinite;
+    }
+    @keyframes grain-drift {
+      0%,100%{ transform: translate(0,0) }
+      10%    { transform: translate(-5%,-10%) }
+      20%    { transform: translate(-15%,4%) }
+      30%    { transform: translate(6%,-25%) }
+      40%    { transform: translate(-4%,22%) }
+      50%    { transform: translate(-14%,10%) }
+      60%    { transform: translate(14%,1%) }
+      70%    { transform: translate(0,14%) }
+      80%    { transform: translate(3%,32%) }
+      90%    { transform: translate(-9%,10%) }
+    }
+
+    /* ── NAV ─────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      padding: 22px 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.5s ease, background 0.5s ease, backdrop-filter 0.5s ease;
+    }
+    nav.scrolled {
+      background: rgba(6,6,8,0.86);
+      backdrop-filter: blur(18px);
+      border-color: var(--border);
+    }
+    .nav-logo {
+      font-family: var(--fm); font-size: 13px; font-weight: 500;
+      color: var(--ink); text-decoration: none; letter-spacing: 0.5px;
+    }
+    .nav-logo em { color: var(--fire); font-style: normal; }
+    .nav-links { display: flex; align-items: center; gap: 34px; list-style: none; }
+    .nav-links a {
+      font-family: var(--fm); font-size: 11px; font-weight: 400;
+      color: var(--ink-2); text-decoration: none;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-oraxai { color: #7aaeff !important; }
+    .nav-oraxai:hover { color: #a8c8ff !important; }
+    .nav-cta {
+      color: var(--ink) !important;
+      border: 1px solid var(--border) !important;
+      padding: 7px 18px; border-radius: 2px;
+    }
+    .nav-cta:hover {
+      border-color: rgba(255,255,255,0.25) !important;
+      background: rgba(255,255,255,0.04);
+    }
+
+    /* ── HERO ─────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      padding: 0 60px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: relative; overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute; pointer-events: none;
+      top: 10%; right: 5%;
+      width: 700px; height: 600px;
+      background: radial-gradient(ellipse 60% 60% at 60% 50%,
+        rgba(255,107,53,0.07) 0%, transparent 70%);
+    }
+    .hero-glow-b {
+      position: absolute; pointer-events: none;
+      bottom: 20%; left: 0;
+      width: 500px; height: 400px;
+      background: radial-gradient(ellipse at 30% 50%,
+        rgba(255,180,71,0.04) 0%, transparent 65%);
+    }
+
+    /* Upper block: name + Charizard */
+    .hero-upper {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding-top: 130px; position: relative; z-index: 2;
+    }
+    .hero-overline {
+      font-family: var(--fm); font-size: 11px; font-weight: 400;
+      color: var(--ink-3); letter-spacing: 2.5px; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero-name {
+      font-family: var(--fd);
+      font-size: clamp(60px, 9vw, 130px);
+      font-weight: 800; line-height: 0.88;
+      letter-spacing: -3px; color: var(--ink);
+    }
+    .hero-name .name-fire { color: var(--fire); display: block; }
+
+    /* Charizard */
+    .hero-char {
+      flex-shrink: 0; padding: 0 0 20px 60px;
+      display: flex; flex-direction: column; align-items: center;
+      position: relative;
+    }
+    .hero-char-sprite {
+      image-rendering: pixelated;
+      width: 150px; height: 150px;
+      filter: drop-shadow(0 10px 32px rgba(255,107,53,0.32));
+      animation: char-float 5s ease-in-out infinite;
+    }
+    @keyframes char-float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-13px); }
+    }
+    .hero-char-id {
+      margin-top: 12px;
+      font-family: var(--fm); font-size: 9px;
+      color: var(--ink-3); letter-spacing: 1.5px; text-transform: uppercase;
+    }
+
+    /* Divider */
+    .hero-rule {
+      position: relative; z-index: 2;
+      height: 1px; background: var(--border); margin: 0 0 0;
+    }
+
+    /* Lower block: description, meta, CTA */
+    .hero-lower {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 40px;
+      padding: 28px 0 52px;
+      position: relative; z-index: 2;
+    }
+    .hero-desc {
+      font-size: 15px; color: var(--ink-2); line-height: 1.72;
+      max-width: 340px;
+    }
+    .hero-lower-meta {
+      font-family: var(--fm); font-size: 11px; color: var(--ink-3);
+      line-height: 2.2; letter-spacing: 0.3px;
+    }
+    .hero-lower-meta strong { color: var(--ink-2); font-weight: 500; }
+    .hero-ctas {
+      display: flex; flex-direction: column;
+      justify-content: center; gap: 10px; align-items: flex-end;
+    }
+    .hero-ctas a {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--fm); font-size: 12px; font-weight: 500;
+      text-decoration: none; letter-spacing: 0.5px;
+      transition: all 0.25s ease;
+    }
+    .hero-ctas a svg { transition: transform 0.25s ease; }
+    .hero-ctas a:hover svg { transform: translate(3px,-2px); }
+    .cta-primary {
+      color: var(--bg); background: var(--ink);
+      padding: 11px 22px; border-radius: 2px;
+      transition: background 0.2s ease, color 0.2s ease !important;
+    }
+    .cta-primary:hover { background: var(--cream) !important; }
+    .cta-ghost {
+      color: var(--ink-2);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+    }
+    .cta-ghost:hover { color: var(--ink); border-color: var(--ink-2); }
+
+    /* ── STATS BAND ─────────────────────────── */
+    .stats-band {
+      background: var(--cream);
+      display: grid; grid-template-columns: repeat(4, 1fr);
+    }
+    .stat-cell {
+      padding: 36px 48px;
+      border-right: 1px solid rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .stat-cell:last-child { border-right: none; }
+    .stat-n {
+      font-family: var(--fd); font-size: 40px; font-weight: 800;
+      color: #0C0C10; line-height: 1; letter-spacing: -2px;
+      margin-bottom: 8px;
+    }
+    .stat-n sup { font-size: 28px; vertical-align: super; letter-spacing: 0; }
+    .stat-l {
+      font-family: var(--fm); font-size: 11px; font-weight: 400;
+      color: #5A5850; letter-spacing: 0.5px; line-height: 1.5;
+    }
+
+    /* ── TICKER (skills marquee) ─────────────── */
+    .ticker-section {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0; overflow: hidden;
+    }
+    .ticker-track {
+      display: flex; gap: 0; width: max-content;
+      animation: ticker-scroll 28s linear infinite;
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+    @keyframes ticker-scroll { to { transform: translateX(-50%); } }
+    .ticker-item {
+      display: flex; align-items: center; gap: 28px;
+      padding: 0 28px; white-space: nowrap;
+      font-family: var(--fm); font-size: 11px; font-weight: 400;
+      color: var(--ink-3); letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .ticker-dot {
+      width: 3px; height: 3px; background: var(--fire);
+      border-radius: 50%; flex-shrink: 0;
+    }
+
+    /* ── SECTION BASE ─────────────────────────── */
+    .section-wrap { padding: 100px 60px; }
+    .section-header {
+      display: flex; align-items: baseline; gap: 20px;
+      margin-bottom: 64px;
+      border-bottom: 1px solid var(--border); padding-bottom: 20px;
+    }
+    .section-num {
+      font-family: var(--fm); font-size: 11px; font-weight: 400;
+      color: var(--ink-3); letter-spacing: 1px; flex-shrink: 0;
+    }
+    .section-title {
+      font-family: var(--fd); font-size: clamp(32px, 4.5vw, 48px);
+      font-weight: 800; letter-spacing: -1.5px; line-height: 1;
+      color: var(--ink);
+    }
+    .section-sub {
+      margin-left: auto; font-size: 14px; color: var(--ink-3);
+      max-width: 280px; line-height: 1.65; text-align: right;
+      font-family: var(--fm); font-weight: 400;
+    }
+
+    /* ── ABOUT ─────────────────────────────────── */
+    #about { background: var(--bg); }
+    .about-body {
+      display: grid; grid-template-columns: 5fr 4fr;
+      gap: 80px; align-items: start;
+    }
+    .about-text p {
+      font-size: 17px; line-height: 1.8; color: var(--ink-2);
+      margin-bottom: 20px;
+    }
+    .about-text p strong { color: var(--ink); font-weight: 500; }
+    .about-text p:last-child { margin-bottom: 0; }
+
+    .about-aside { display: flex; flex-direction: column; gap: 14px; }
+    .about-aside-item {
+      padding: 18px 20px;
+      background: var(--bg-2);
+      border: 1px solid var(--border-2);
+      border-radius: 2px;
+    }
+    .aside-label {
+      font-family: var(--fm); font-size: 10px; font-weight: 400;
+      color: var(--ink-3); letter-spacing: 1.5px; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .aside-val {
+      font-size: 14px; color: var(--ink-2); line-height: 1.5; font-weight: 400;
+    }
+
+    /* ── EXPERIENCE ─────────────────────────────── */
+    #experience { background: var(--bg-2); }
+    .exp-list { display: flex; flex-direction: column; }
+    .exp-row {
+      display: grid; grid-template-columns: 56px 180px 1fr auto;
+      gap: 28px; padding: 36px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .exp-row.visible { opacity: 1; transform: translateY(0); }
+    .exp-row:last-child { border-bottom: none; }
+    .exp-logo {
+      width: 48px; height: 48px;
+      border-radius: 8px;
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .exp-logo img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .exp-logo svg {
+      width: 28px; height: 28px;
+    }
+    .exp-period {
+      font-family: var(--fm); font-size: 11px; font-weight: 400;
+      color: var(--ink-3); letter-spacing: 0.5px; padding-top: 5px;
+      line-height: 1.7;
+    }
+    .exp-period strong { color: var(--ink-2); font-weight: 500; display: block; }
+    .exp-role-title {
+      font-family: var(--fd); font-size: 22px; font-weight: 700;
+      letter-spacing: -0.5px; color: var(--ink); margin-bottom: 14px;
+    }
+    .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .exp-bullets li {
+      font-size: 13px; color: var(--ink-3); line-height: 1.65;
+      padding-left: 16px; position: relative;
+    }
+    .exp-bullets li::before {
+      content: '-'; position: absolute; left: 0; color: var(--fire); font-size: 12px;
+    }
+    .exp-idx {
+      font-family: var(--fm); font-size: 11px; color: var(--ink-3);
+      letter-spacing: 0.5px; padding-top: 5px;
+    }
+
+    /* ── ORAXAI SECTION ─────────────────────────── */
+    #oraxai {
+      background: #080d1a; position: relative; overflow: hidden;
+      padding: 100px 60px;
+    }
+    #oraxai .hero-glow {
+      top: -5%; right: -5%;
+      background: radial-gradient(ellipse 55% 55% at 60% 50%,
+        rgba(79,126,247,0.1) 0%, transparent 70%);
+    }
+    /* Grid texture */
+    #oraxai::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(79,126,247,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79,126,247,0.04) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+    .orax-layout {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center; position: relative; z-index: 2;
+    }
+    .orax-visual {
+      display: flex; align-items: center; justify-content: center;
+    }
+    .orax-network-wrap { position: relative; width: 300px; height: 300px; }
+    .orax-net-glow {
+      position: absolute; inset: -60px;
+      background: radial-gradient(circle, rgba(79,126,247,0.15) 0%, transparent 65%);
+      border-radius: 50%;
+      animation: net-breathe 4s ease-in-out infinite;
+    }
+    @keyframes net-breathe {
+      0%,100%{opacity:0.7;transform:scale(1)}
+      50%{opacity:1;transform:scale(1.1)}
+    }
+    .orax-eyebrow {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--fm); font-size: 11px; font-weight: 500;
+      color: #4F7EF7; letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .orax-eyebrow-line {
+      display: inline-block; width: 24px; height: 1px; background: #4F7EF7;
+    }
+    .orax-name {
+      font-family: var(--fd);
+      font-size: clamp(44px, 6vw, 64px);
+      font-weight: 800; letter-spacing: -3px; line-height: 0.9;
+      background: linear-gradient(130deg, #a0bcff 0%, #4F7EF7 50%, #7aaeff 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 10px;
+    }
+    .orax-badge {
+      display: inline-block;
+      background: rgba(79,126,247,0.1);
+      border: 1px solid rgba(79,126,247,0.25);
+      color: #7aaeff;
+      font-family: var(--fm); font-size: 11px; font-weight: 400;
+      padding: 4px 12px; border-radius: 2px; margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+    .orax-tagline {
+      font-family: var(--fd); font-size: 22px; font-weight: 700;
+      color: var(--ink); letter-spacing: -0.5px; line-height: 1.3;
+      margin-bottom: 16px;
+    }
+    .orax-desc {
+      font-size: 14px; color: var(--ink-2); line-height: 1.75;
+      margin-bottom: 36px; max-width: 460px;
+    }
+    .orax-metrics {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 10px; margin-bottom: 36px;
+    }
+    .orax-m {
+      background: rgba(79,126,247,0.06);
+      border: 1px solid rgba(79,126,247,0.14);
+      border-radius: 2px; padding: 16px 12px;
+      transition: all 0.3s ease;
+    }
+    .orax-m:hover {
+      background: rgba(79,126,247,0.1);
+      border-color: rgba(79,126,247,0.3);
+      transform: translateY(-3px);
+    }
+    .orax-m-n {
+      font-family: var(--fd); font-size: 24px; font-weight: 800;
+      color: #7aaeff; line-height: 1; letter-spacing: -1px; margin-bottom: 5px;
+    }
+    .orax-m-l {
+      font-family: var(--fm); font-size: 10px; color: rgba(122,174,255,0.55);
+      line-height: 1.4; letter-spacing: 0.3px;
+    }
+    .orax-built { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+    .orax-built-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 13px; color: var(--ink-3); line-height: 1.6;
+    }
+    .orax-built-num {
+      font-family: var(--fm); font-size: 10px; color: #4F7EF7;
+      flex-shrink: 0; padding-top: 3px; letter-spacing: 0.5px;
+    }
+    .orax-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #4F7EF7; color: #fff;
+      font-family: var(--fm); font-size: 12px; font-weight: 500;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      padding: 13px 24px; border-radius: 2px;
+      text-decoration: none; transition: all 0.25s ease;
+    }
+    .orax-cta:hover {
+      background: #6B93F8;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(79,126,247,0.3);
+    }
+    .orax-cta svg { transition: transform 0.25s ease; }
+    .orax-cta:hover svg { transform: translate(3px,-2px); }
+
+    /* ── PROJECTS ─────────────────────────────── */
+    #projects { background: var(--bg); }
+
+    /* Asymmetric layout: one featured + two secondary */
+    .proj-asymm {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      grid-template-rows: auto auto;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .proj-card {
+      background: var(--bg);
+      padding: 40px;
+      transition: background 0.3s ease;
+      position: relative; overflow: hidden;
+    }
+    .proj-card::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: var(--fire); transform: scaleX(0); transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .proj-card:hover { background: var(--bg-2); }
+    .proj-card:hover::after { transform: scaleX(1); }
+
+    .proj-card-featured {
+      grid-row: 1 / 3;
+      display: flex; flex-direction: column; justify-content: space-between;
+      border: 1px solid transparent;
+      background:
+        linear-gradient(var(--bg), var(--bg)) padding-box,
+        linear-gradient(to bottom right, rgba(255,255,255,0.12), rgba(255,255,255,0)) border-box;
+    }
+    .proj-card-featured::after { display: none; }
+    .proj-kicker {
+      font-family: var(--fm); font-size: 10px; font-weight: 400;
+      color: var(--ink-3); letter-spacing: 3px; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .proj-name {
+      font-family: var(--fd); font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 800; letter-spacing: -0.04em; color: var(--ink);
+      line-height: 1; margin-bottom: 16px;
+    }
+    .proj-desc {
+      font-size: 14px; color: var(--ink-2); line-height: 1.72;
+      margin-bottom: 28px; flex-grow: 1; opacity: 0.7;
+    }
+    .proj-desc strong { color: var(--ink); opacity: 1; }
+    .proj-tags {
+      display: flex; flex-wrap: wrap; align-items: center;
+      gap: 0; margin-bottom: 28px;
+    }
+    .proj-tag {
+      font-family: var(--fm); font-size: 11px; font-weight: 400;
+      color: var(--ink-3); letter-spacing: 0.5px;
+      border: none; padding: 0; border-radius: 0;
+    }
+    .proj-tag + .proj-tag::before {
+      content: '·'; margin: 0 10px;
+      color: var(--fire); font-weight: 700;
+    }
+
+    /* Chameleon glow for PaideAI */
+    .chameleon-glow {
+      position: absolute;
+      width: 200px; height: 200px;
+      filter: blur(80px);
+      opacity: 0.35;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: chameleon-shift 10s ease-in-out infinite;
+      z-index: 0;
+    }
+    @keyframes chameleon-shift {
+      0%, 100% { background-color: #2dd4a0; }
+      33%      { background-color: #7c5cbf; }
+      66%      { background-color: #3b82f6; }
+    }
+    .proj-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--fm); font-size: 11px; font-weight: 500;
+      color: var(--ink-2); text-decoration: none; letter-spacing: 0.8px;
+      text-transform: uppercase; transition: color 0.2s, gap 0.2s;
+    }
+    .proj-link svg { transition: transform 0.2s ease; }
+    .proj-link:hover { color: var(--ink); gap: 12px; }
+    .proj-link:hover svg { transform: translate(3px,-2px); }
+
+    /* ── EDUCATION ──────────────────────────────── */
+    #education { background: var(--bg-2); }
+    .edu-list { display: flex; flex-direction: column; }
+    .edu-row {
+      display: grid; grid-template-columns: 200px 1fr auto;
+      gap: 40px; padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: baseline;
+    }
+    .edu-row:last-child { border-bottom: none; }
+    .edu-period { font-family: var(--fm); font-size: 11px; color: var(--ink-3); letter-spacing: 0.5px; }
+    .edu-degree { font-family: var(--fd); font-size: 19px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .edu-school { font-family: var(--fm); font-size: 11px; color: var(--ink-3); letter-spacing: 0.5px; }
+    .edu-note { font-size: 13px; color: var(--ink-3); line-height: 1.6; max-width: 280px; text-align: right; font-family: var(--fm); }
+
+    /* ── CONTACT ─────────────────────────────────── */
+    #contact {
+      background: var(--bg-3);
+      padding: 120px 60px;
+      position: relative; overflow: hidden;
+    }
+    .contact-glow {
+      position: absolute; top: -20%; right: -10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(255,107,53,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .contact-inner { position: relative; z-index: 2; }
+    .contact-headline {
+      font-family: var(--fd);
+      font-size: clamp(52px, 9vw, 110px);
+      font-weight: 800; line-height: 0.88;
+      letter-spacing: -3px; color: var(--ink);
+      margin-bottom: 48px;
+    }
+    .contact-headline em {
+      color: var(--fire); font-style: normal; display: block;
+    }
+    .contact-row {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      border-top: 1px solid var(--border); padding-top: 32px;
+    }
+    .contact-note {
+      font-size: 14px; color: var(--ink-3); line-height: 1.7; max-width: 320px;
+    }
+    .contact-links { display: flex; gap: 14px; }
+    .contact-link {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--fm); font-size: 11px; font-weight: 500;
+      color: var(--ink-2); text-decoration: none;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      border: 1px solid var(--border); padding: 11px 18px; border-radius: 2px;
+      transition: all 0.25s ease;
+    }
+    .contact-link:hover {
+      color: var(--ink); border-color: rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.03);
+      transform: translateY(-2px);
+    }
+    .contact-link svg { transition: transform 0.25s ease; }
+    .contact-link:hover svg { transform: translate(2px,-2px); }
+
+    /* ── FOOTER ─────────────────────────────────── */
+    footer {
+      padding: 22px 60px;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--bg);
+    }
+    .foot-l { font-family: var(--fm); font-size: 11px; color: var(--ink-3); letter-spacing: 0.5px; }
+    .foot-r { font-family: var(--fm); font-size: 11px; color: rgba(255,107,53,0.35); letter-spacing: 1px; }
+
+    /* ── SCROLL REVEAL ───────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 18px 24px; }
+      .nav-links { display: none; }
+      .hero { padding: 0 24px; }
+      .hero-upper { flex-direction: column; gap: 32px; padding-top: 100px; }
+      .hero-char { padding: 0; }
+      .hero-lower { grid-template-columns: 1fr; gap: 24px; }
+      .hero-ctas { align-items: flex-start; }
+      .section-wrap { padding: 64px 24px; }
+      .section-header { flex-wrap: wrap; gap: 12px; }
+      .section-sub { text-align: left; max-width: 100%; margin-left: 0; }
+      .stats-band { grid-template-columns: 1fr 1fr; }
+      .stat-cell { padding: 28px 28px; }
+      .about-body { grid-template-columns: 1fr; gap: 40px; }
+      .exp-row { grid-template-columns: 1fr; gap: 8px; }
+      .exp-logo { display: none; }
+      .edu-row { grid-template-columns: 1fr; gap: 6px; }
+      .edu-note { text-align: left; }
+      .orax-layout { grid-template-columns: 1fr; gap: 40px; }
+      .orax-metrics { grid-template-columns: 1fr 1fr; }
+      .proj-asymm { grid-template-columns: 1fr; }
+      .proj-card-featured { grid-row: auto; }
+      .contact-headline { font-size: clamp(48px, 14vw, 100px); }
+      .contact-row { flex-direction: column; gap: 28px; align-items: flex-start; }
+      footer { flex-direction: column; gap: 8px; text-align: center; padding: 20px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<!-- ═══ NAV ═══ -->
+<nav id="nav">
+  <a href="#" class="nav-logo">SEF<em>.</em></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Work</a></li>
+    <li><a href="#oraxai" class="nav-oraxai">OraxAI</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact" class="nav-cta">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="home">
+  <div class="hero-glow"></div>
+  <div class="hero-glow-b"></div>
+
+  <div class="hero-upper">
+    <div class="hero-text">
+      <div class="hero-overline">Software &amp; Systems / Montreal, QC</div>
+      <h1 class="hero-name">
+        SAMI
+        <span class="name-fire">EL-FIGHA.</span>
+      </h1>
+    </div>
+
+    <div class="hero-char">
+      <img
+        class="hero-char-sprite"
+        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif"
+        alt="Charizard mascot"
+        onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png';this.style.width='140px';this.style.height='140px';"
+      />
+      <div class="hero-char-id">#006 Charizard / Fire · Flying</div>
+    </div>
+  </div>
+
+  <div class="hero-rule"></div>
+
+  <div class="hero-lower">
+    <p class="hero-desc">
+      I like building things that work and shipping them. I've built scoring engines, automation pipelines, and products people actually pay for.
+    </p>
+    <div class="hero-lower-meta">
+      <strong>University of Waterloo</strong><br>
+      BASc Electrical Engineering, Sept 2026<br><br>
+      <strong>Open to internships</strong><br>
+      2025 - 2026 · Software / ML
+    </div>
+    <div class="hero-ctas">
+      <a href="mailto:sami.elfigha@gmail.com" class="cta-primary">
+        Get in touch
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M2 7h10M8 3l4 4-4 4"/>
+        </svg>
+      </a>
+      <a href="https://github.com/SMXFREEZE" target="_blank" rel="noopener" class="cta-ghost">
+        GitHub
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+          <path d="M2 10L10 2M4 2h6v6"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS BAND ═══ -->
+<div class="stats-band reveal">
+  <div class="stat-cell">
+    <div class="stat-n">100<sup>+</sup></div>
+    <div class="stat-l">Monthly active<br>users at OraxAI</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-n">$2K<sup>+</sup></div>
+    <div class="stat-l">Monthly recurring<br>revenue</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-n">40<sup>%</sup></div>
+    <div class="stat-l">Task resolution<br>speedup via agents</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-n">1M<sup>+</sup></div>
+    <div class="stat-l">Content views<br>across platforms</div>
+  </div>
+</div>
+
+<!-- ═══ TICKER ═══ -->
+<div class="ticker-section">
+  <div class="ticker-track">
+    <!-- Set 1 -->
+    <span class="ticker-item">Python<span class="ticker-dot"></span></span>
+    <span class="ticker-item">React<span class="ticker-dot"></span></span>
+    <span class="ticker-item">FastAPI<span class="ticker-dot"></span></span>
+    <span class="ticker-item">AWS<span class="ticker-dot"></span></span>
+    <span class="ticker-item">Multi-Agent Systems<span class="ticker-dot"></span></span>
+    <span class="ticker-item">OpenAI API<span class="ticker-dot"></span></span>
+    <span class="ticker-item">Docker<span class="ticker-dot"></span></span>
+    <span class="ticker-item">C++<span class="ticker-dot"></span></span>
+    <span class="ticker-item">Amazon Bedrock<span class="ticker-dot"></span></span>
+    <span class="ticker-item">SQL<span class="ticker-dot"></span></span>
+    <span class="ticker-item">Prompt Engineering<span class="ticker-dot"></span></span>
+    <span class="ticker-item">Pandas<span class="ticker-dot"></span></span>
+    <!-- Set 2 (duplicate for seamless loop) -->
+    <span class="ticker-item">Python<span class="ticker-dot"></span></span>
+    <span class="ticker-item">React<span class="ticker-dot"></span></span>
+    <span class="ticker-item">FastAPI<span class="ticker-dot"></span></span>
+    <span class="ticker-item">AWS<span class="ticker-dot"></span></span>
+    <span class="ticker-item">Multi-Agent Systems<span class="ticker-dot"></span></span>
+    <span class="ticker-item">OpenAI API<span class="ticker-dot"></span></span>
+    <span class="ticker-item">Docker<span class="ticker-dot"></span></span>
+    <span class="ticker-item">C++<span class="ticker-dot"></span></span>
+    <span class="ticker-item">Amazon Bedrock<span class="ticker-dot"></span></span>
+    <span class="ticker-item">SQL<span class="ticker-dot"></span></span>
+    <span class="ticker-item">Prompt Engineering<span class="ticker-dot"></span></span>
+    <span class="ticker-item">Pandas<span class="ticker-dot"></span></span>
+  </div>
+</div>
+
+<!-- ═══ ABOUT ═══ -->
+<section id="about">
+  <div class="section-wrap">
+    <div class="section-header reveal">
+      <span class="section-num">01</span>
+      <h2 class="section-title">About</h2>
+      <p class="section-sub">Who I am, what I care about.</p>
+    </div>
+    <div class="about-body reveal">
+      <div class="about-text">
+        <p>I'm studying <strong>Electrical Engineering at the University of Waterloo</strong>. Before that I did my DEC in Pure &amp; Applied Sciences at Maisonneuve College in Montreal.</p>
+        <p>I co-founded <strong>OraxAI</strong> and got it to paying users. Built the whole thing: the scoring engine, the frontend, the backend, the marketing. Before that I interned at <strong>NeuralSeek AI</strong> and built automation pipelines on AWS. I also spent time at <strong>KPMG</strong> early on.</p>
+        <p>Right now I'm also building <strong>PaideAI</strong>, an AI tutoring platform that adapts to how each student actually learns. On the side I do research on <strong>how students learn calculus</strong> and tutor people every week. Teaching and debugging software have a lot in common, honestly.</p>
+      </div>
+      <div class="about-aside">
+        <div class="about-aside-item">
+          <div class="aside-label">Location</div>
+          <div class="aside-val">Montreal, QC → Waterloo, ON</div>
+        </div>
+        <div class="about-aside-item">
+          <div class="aside-label">Languages</div>
+          <div class="aside-val">English · French · Arabic</div>
+        </div>
+        <div class="about-aside-item">
+          <div class="aside-label">Availability</div>
+          <div class="aside-val">Looking for 2025-2026 internships in software or product</div>
+        </div>
+        <div class="about-aside-item">
+          <div class="aside-label">Recognition</div>
+          <div class="aside-val">Mathematics Olympiad Finalist, Casablanca, Morocco</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ EXPERIENCE ═══ -->
+<section id="experience">
+  <div class="section-wrap">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Work</h2>
+      <p class="section-sub">Places I've worked and what I did there.</p>
+    </div>
+    <div class="exp-list">
+
+      <!-- 01: KPMG -->
+      <div class="exp-row">
+        <div class="exp-logo">
+          <img src="img/kpmg.png" alt="KPMG">
+        </div>
+        <div class="exp-period">
+          <strong>KPMG</strong>
+          2025<br>Montreal, QC
+        </div>
+        <div>
+          <div class="exp-role-title">Ace the Case Participant</div>
+          <ul class="exp-bullets">
+            <li>Competed in KPMG's Ace the Case challenge, solving real business problems under time constraints.</li>
+            <li>Worked in a team to analyze financial data and present strategic recommendations to a panel of judges.</li>
+          </ul>
+        </div>
+        <div class="exp-idx">01</div>
+      </div>
+
+      <!-- 02: Maisonneuve College -->
+      <div class="exp-row">
+        <div class="exp-logo">
+          <img src="img/maisonneuve.png" alt="Collège de Maisonneuve">
+        </div>
+        <div class="exp-period">
+          <strong>Maisonneuve College</strong>
+          Aug 2025 - Now<br>Montreal, QC
+        </div>
+        <div>
+          <div class="exp-role-title">Student Researcher</div>
+          <ul class="exp-bullets">
+            <li>Studying how students build (or don't build) real understanding of calculus. Surveyed 20+ students to find where the gaps are.</li>
+            <li>Tutor 10+ students every week, one-on-one and in small groups.</li>
+          </ul>
+        </div>
+        <div class="exp-idx">02</div>
+      </div>
+
+      <!-- 03: NeuralSeek AI -->
+      <div class="exp-row">
+        <div class="exp-logo" style="background: transparent; border: none;">
+          <img src="img/neuralseek.png" alt="NeuralSeek">
+        </div>
+        <div class="exp-period">
+          <strong>NeuralSeek AI</strong>
+          Sept - Dec 2025<br>Miami (Remote)
+        </div>
+        <div>
+          <div class="exp-role-title">Software Developer Intern</div>
+          <ul class="exp-bullets">
+            <li>Shipped an automation agent to production on AWS. Hit every deadline in their internal challenge.</li>
+            <li>Built a pipeline that routes tasks, runs them, and checks the output. Cut resolution time by about 40%.</li>
+            <li>Iterated on the design 3+ times based on benchmarks and competitor analysis. Got accuracy up ~30%.</li>
+          </ul>
+        </div>
+        <div class="exp-idx">03</div>
+      </div>
+
+      <!-- 04: OraxAI -->
+      <div class="exp-row">
+        <div class="exp-logo" style="background: transparent; border: none;">
+          <img src="img/oraxai.png" alt="OraxAI">
+        </div>
+        <div class="exp-period">
+          <strong>OraxAI</strong>
+          Dec 2025 - Now<br>Montreal, QC
+        </div>
+        <div>
+          <div class="exp-role-title">Co-Founder &amp; Product Engineer</div>
+          <ul class="exp-bullets">
+            <li>Built the resume scoring engine, the React frontend, and the FastAPI backend. Shipped it, got feedback, kept improving it.</li>
+            <li>Grew to 100+ monthly users and $2K+/month in revenue. Ran all the marketing myself, got to 10K+ followers and 1M+ views with no ad spend.</li>
+            <li>Set the product direction and worked with the rest of the founding team to ship on time.</li>
+          </ul>
+        </div>
+        <div class="exp-idx">04</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ORAXAI FEATURE ═══ -->
+<section id="oraxai">
+  <div class="hero-glow"></div>
+  <div class="orax-layout">
+
+    <!-- Animated network SVG -->
+    <div class="orax-visual reveal">
+      <div class="orax-network-wrap">
+        <div class="orax-net-glow"></div>
+        <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="nglow">
+              <feGaussianBlur stdDeviation="2.5" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <g stroke="#4F7EF7" stroke-width="0.8" fill="none">
+            <line x1="150" y1="150" x2="150" y2="48"  opacity="0.3"><animate attributeName="opacity" values="0.3;0.7;0.3" dur="3.1s" repeatCount="indefinite"/></line>
+            <line x1="150" y1="150" x2="242" y2="98"  opacity="0.3"><animate attributeName="opacity" values="0.3;0.65;0.3" dur="2.7s" repeatCount="indefinite"/></line>
+            <line x1="150" y1="150" x2="254" y2="188" opacity="0.3"><animate attributeName="opacity" values="0.3;0.6;0.3" dur="3.4s" repeatCount="indefinite"/></line>
+            <line x1="150" y1="150" x2="180" y2="258" opacity="0.3"><animate attributeName="opacity" values="0.3;0.7;0.3" dur="2.9s" repeatCount="indefinite"/></line>
+            <line x1="150" y1="150" x2="82"  y2="252" opacity="0.3"><animate attributeName="opacity" values="0.3;0.65;0.3" dur="3.6s" repeatCount="indefinite"/></line>
+            <line x1="150" y1="150" x2="48"  y2="188" opacity="0.3"><animate attributeName="opacity" values="0.3;0.6;0.3" dur="2.8s" repeatCount="indefinite"/></line>
+            <line x1="150" y1="150" x2="58"  y2="98"  opacity="0.3"><animate attributeName="opacity" values="0.3;0.7;0.3" dur="3.2s" repeatCount="indefinite"/></line>
+            <line x1="150" y1="48"  x2="242" y2="98"  opacity="0.18"><animate attributeName="opacity" values="0.18;0.4;0.18" dur="4s" repeatCount="indefinite"/></line>
+            <line x1="242" y1="98"  x2="254" y2="188" opacity="0.18"><animate attributeName="opacity" values="0.18;0.38;0.18" dur="3.8s" repeatCount="indefinite"/></line>
+            <line x1="254" y1="188" x2="180" y2="258" opacity="0.18"><animate attributeName="opacity" values="0.18;0.4;0.18" dur="4.2s" repeatCount="indefinite"/></line>
+            <line x1="180" y1="258" x2="82"  y2="252" opacity="0.18"><animate attributeName="opacity" values="0.18;0.38;0.18" dur="3.5s" repeatCount="indefinite"/></line>
+            <line x1="82"  y1="252" x2="48"  y2="188" opacity="0.18"><animate attributeName="opacity" values="0.18;0.4;0.18" dur="4.1s" repeatCount="indefinite"/></line>
+            <line x1="48"  y1="188" x2="58"  y2="98"  opacity="0.18"><animate attributeName="opacity" values="0.18;0.38;0.18" dur="3.7s" repeatCount="indefinite"/></line>
+            <line x1="58"  y1="98"  x2="150" y2="48"  opacity="0.18"><animate attributeName="opacity" values="0.18;0.4;0.18" dur="4.3s" repeatCount="indefinite"/></line>
+          </g>
+          <circle cx="150" cy="150" r="8" fill="#4F7EF7" filter="url(#nglow)">
+            <animate attributeName="r" values="8;10;8" dur="3s" repeatCount="indefinite"/>
+          </circle>
+          <g fill="#7aaeff" filter="url(#nglow)">
+            <circle cx="150" cy="48"  r="4.5"><animate attributeName="r" values="4.5;6;4.5" dur="2.9s" repeatCount="indefinite"/></circle>
+            <circle cx="242" cy="98"  r="4"><animate attributeName="r" values="4;5.5;4" dur="3.3s" repeatCount="indefinite"/></circle>
+            <circle cx="254" cy="188" r="4.5"><animate attributeName="r" values="4.5;6;4.5" dur="2.7s" repeatCount="indefinite"/></circle>
+            <circle cx="180" cy="258" r="4"><animate attributeName="r" values="4;5.5;4" dur="3.6s" repeatCount="indefinite"/></circle>
+            <circle cx="82"  cy="252" r="4.5"><animate attributeName="r" values="4.5;6;4.5" dur="3.1s" repeatCount="indefinite"/></circle>
+            <circle cx="48"  cy="188" r="4"><animate attributeName="r" values="4;5.5;4" dur="2.8s" repeatCount="indefinite"/></circle>
+            <circle cx="58"  cy="98"  r="4.5"><animate attributeName="r" values="4.5;6;4.5" dur="3.4s" repeatCount="indefinite"/></circle>
+          </g>
+          <circle r="2.5" fill="#a0c5ff" opacity="0.9">
+            <animateMotion dur="3s" repeatCount="indefinite" path="M150,150 L150,48"/>
+            <animate attributeName="opacity" values="0;0.9;0" dur="3s" repeatCount="indefinite"/>
+          </circle>
+          <circle r="2.5" fill="#a0c5ff" opacity="0.9">
+            <animateMotion dur="3.8s" repeatCount="indefinite" begin="1.4s" path="M150,150 L254,188"/>
+            <animate attributeName="opacity" values="0;0.9;0" dur="3.8s" repeatCount="indefinite" begin="1.4s"/>
+          </circle>
+          <circle r="2.5" fill="#a0c5ff" opacity="0.9">
+            <animateMotion dur="3.3s" repeatCount="indefinite" begin="0.8s" path="M150,150 L58,98"/>
+            <animate attributeName="opacity" values="0;0.9;0" dur="3.3s" repeatCount="indefinite" begin="0.8s"/>
+          </circle>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="reveal">
+      <div class="orax-eyebrow">
+        <span class="orax-eyebrow-line"></span>
+        Co-Founder
+      </div>
+      <div class="orax-name">OraxAI</div>
+      <div class="orax-badge">Dec 2025 - Present · Product Engineer</div>
+      <p class="orax-tagline">Resume scoring that actually works. Built from scratch.</p>
+      <p class="orax-desc">
+        I co-founded OraxAI and built the whole thing: the engine that reads job postings and finds what's missing in your resume, the React frontend, the API, and the marketing. Went from nothing to paying users in a few weeks.
+      </p>
+      <div class="orax-metrics">
+        <div class="orax-m">
+          <div class="orax-m-n">100+</div>
+          <div class="orax-m-l">Monthly active users</div>
+        </div>
+        <div class="orax-m">
+          <div class="orax-m-n">$2K+</div>
+          <div class="orax-m-l">Monthly recurring revenue</div>
+        </div>
+        <div class="orax-m">
+          <div class="orax-m-n">10K+</div>
+          <div class="orax-m-l">Social followers</div>
+        </div>
+        <div class="orax-m">
+          <div class="orax-m-n">1M+</div>
+          <div class="orax-m-l">Total views</div>
+        </div>
+      </div>
+      <div class="orax-built">
+        <div class="orax-built-item">
+          <span class="orax-built-num">01</span>
+          Scoring engine that reads job postings, compares them to your resume, and tells you exactly what to fix.
+        </div>
+        <div class="orax-built-item">
+          <span class="orax-built-num">02</span>
+          React frontend + FastAPI backend. Login, editing, PDF export, the whole thing. Improved it based on real user sessions.
+        </div>
+        <div class="orax-built-item">
+          <span class="orax-built-num">03</span>
+          Marketing. SEO and content that got 1M+ views and 10K+ followers without spending a dollar on ads.
+        </div>
+      </div>
+      <a href="https://www.oraxai.ca/" target="_blank" rel="noopener" class="orax-cta">
+        Visit oraxai.ca
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+          <path d="M2 10L10 2M4 2h6v6"/>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ PROJECTS ═══ -->
+<section id="projects">
+  <div class="section-wrap">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Projects</h2>
+      <p class="section-sub">Things I've built on the side.</p>
+    </div>
+    <div class="proj-asymm reveal">
+
+      <!-- Featured: PaideAI -->
+      <div class="proj-card proj-card-featured">
+        <div style="position:relative;z-index:1;">
+          <div class="proj-kicker">Active Project</div>
+          <div style="position:relative;display:flex;align-items:center;gap:16px;margin-bottom:12px;">
+            <div class="chameleon-glow" style="top:-60px;left:-40px;"></div>
+            <img src="img/paideai.png" alt="PaideAI" style="height:48px;border-radius:8px;position:relative;z-index:1;">
+            <div class="proj-name" style="margin-bottom:0;position:relative;z-index:1;">PaideAI</div>
+          </div>
+          <p class="proj-desc">
+            <strong>AI tutoring platform that adapts to how each student learns.</strong> Built a chameleon-themed interface with a conversational AI tutor that can explain things in different ways depending on the student.
+            <br><br>
+            Python backend with curriculum data, served through a Flask app. Currently building out the frontend and the adaptive engine.
+          </p>
+          <div class="proj-tags">
+            <span class="proj-tag">Python</span>
+            <span class="proj-tag">Flask</span>
+            <span class="proj-tag">Education</span>
+            <span class="proj-tag">LLMs</span>
+            <span class="proj-tag">Render</span>
+          </div>
+        </div>
+        <a href="https://github.com/SMXFREEZE/PaideAI" target="_blank" rel="noopener" class="proj-link" style="position:relative;z-index:1;">
+          GitHub
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+            <path d="M2 10L10 2M4 2h6v6"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Secondary: FormulaForge -->
+      <div class="proj-card">
+        <div class="proj-kicker">Side Project</div>
+        <div class="proj-name" style="font-size:clamp(22px,2.5vw,30px);">FormulaForge</div>
+        <p class="proj-desc">
+          Tool that helps cosmetic formulators pick ingredients. Uses linear programming plus language models to optimize for cost, regulations, and effectiveness.
+        </p>
+        <div class="proj-tags">
+          <span class="proj-tag">Python</span>
+          <span class="proj-tag">PuLP</span>
+          <span class="proj-tag">Streamlit</span>
+        </div>
+        <a href="https://formula-forge.onrender.com" target="_blank" rel="noopener" class="proj-link">
+          Live demo
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+            <path d="M2 10L10 2M4 2h6v6"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Secondary: More work -->
+      <div class="proj-card">
+        <div class="proj-kicker">Education Research</div>
+        <div class="proj-name" style="font-size:clamp(22px,2.5vw,30px);">Calculus Intuition Study</div>
+        <p class="proj-desc">
+           Surveyed 20+ students to understand where they get stuck between knowing the steps and actually understanding the math. Designed exercises to help close that gap.
+        </p>
+        <div class="proj-tags">
+          <span class="proj-tag">Research</span>
+          <span class="proj-tag">Pedagogy</span>
+          <span class="proj-tag">Mathematics</span>
+        </div>
+        <a href="mailto:sami.elfigha@gmail.com" class="proj-link">
+          Get in touch
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+            <path d="M2 7h8M6 3l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ EDUCATION ═══ -->
+<section id="education">
+  <div class="section-wrap">
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Education</h2>
+    </div>
+    <div class="edu-list">
+      <div class="edu-row reveal">
+        <div class="edu-period">Sept 2026 - Present</div>
+        <div>
+          <div class="edu-degree">BASc Electrical Engineering</div>
+          <div class="edu-school">University of Waterloo</div>
+        </div>
+        <div class="edu-note">Circuits, signals, embedded systems, software</div>
+      </div>
+      <div class="edu-row reveal">
+        <div class="edu-period">Jan 2024 - Dec 2025</div>
+        <div>
+          <div class="edu-degree">DEC, Pure &amp; Applied Sciences</div>
+          <div class="edu-school">Maisonneuve College, Montreal</div>
+        </div>
+        <div class="edu-note">Mathematics Olympiad finalist, Casablanca, Morocco</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACT ═══ -->
+<section id="contact">
+  <div class="contact-glow"></div>
+  <div class="contact-inner section-wrap" style="padding-top:0;padding-bottom:0;">
+    <h2 class="contact-headline reveal">
+      LET'S
+      <em>BUILD.</em>
+    </h2>
+    <div class="contact-row reveal">
+      <p class="contact-note">
+        Looking for internships in software or product engineering. If you're building something cool, reach out.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:sami.elfigha@gmail.com" class="contact-link">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+            <rect x="1" y="3" width="12" height="8" rx="1"/>
+            <path d="M1 4.5l6 4 6-4"/>
+          </svg>
+          Email
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+            <path d="M1 9L9 1M3 1h6v6"/>
+          </svg>
+        </a>
+        <a href="https://github.com/SMXFREEZE" target="_blank" rel="noopener" class="contact-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/>
+          </svg>
+          GitHub
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+            <path d="M1 9L9 1M3 1h6v6"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <span class="foot-l">© 2025 Sami El-Figha</span>
+  <span class="foot-r">GOTTA SHIP 'EM ALL</span>
+</footer>
+
+<script>
+  /* ── NAV SCROLL CLASS ── */
+  const nav = document.getElementById('nav');
+  const onScroll = () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ── SCROLL REVEAL ── */
+  const io = new IntersectionObserver(
+    entries => entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    }),
+    { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+  );
+  document.querySelectorAll('.reveal, .exp-row, .edu-row').forEach(el => io.observe(el));
+
+  /* ── STAGGER exp-row ── */
+  document.querySelectorAll('.exp-row').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.08}s`;
+  });
+</script>
+
+</body>
+</html>
